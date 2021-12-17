@@ -1,4 +1,4 @@
-import pyfuncoll
+import pyfuncol
 
 l = [1, 2, 3]
 
