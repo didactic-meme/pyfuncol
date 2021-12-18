@@ -36,6 +36,7 @@ def test_group_by():
 
 def test_is_empty():
     assert l.is_empty() == False
+    assert [].is_empty() == True
 
 
 def test_size():
