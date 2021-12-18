@@ -102,8 +102,6 @@ def index_of(self: List[__A], elem: __A) -> int:
     return -1
 
 
-# List
-
 def curse_list():
   curse(list, "map", map)
   curse(list, "filter", filter)
