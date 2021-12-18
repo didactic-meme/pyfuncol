@@ -1,5 +1,5 @@
-from .dict import curse_dict
-from .list import curse_list
+from .dict import extend_dict
+from .list import extend_list
 
-curse_list()
-curse_dict()
+extend_list()
+extend_dict()

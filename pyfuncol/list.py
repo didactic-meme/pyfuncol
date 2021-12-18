@@ -1,65 +1,104 @@
 from forbiddenfruit import curse
 from collections import defaultdict
-from typing import Callable, Dict, TypeVar, List, Union
+from typing import Callable, Dict, Optional, TypeVar, List
 
-__A = TypeVar("__A")
-__B = TypeVar("__B")
-__K = TypeVar("__K")
-__U = TypeVar("__U")
+A = TypeVar("A")
+B = TypeVar("B")
+K = TypeVar("K")
+U = TypeVar("U")
 
 
-def map(self: List[__A], f: Callable[[__A], __B]) -> List[__B]:
+def map(self: List[A], f: Callable[[A], B]) -> List[B]:
     """
     Builds a new list by applying a function to all elements of this list.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new list.
     """
     return [f(x) for x in self]
 
 
-def filter(self: List[__A], p: Callable[[__A], bool]) -> List[__A]:
+def filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
     """
     Selects all elements of this list which satisfy a predicate.
+
+    Args:
+        p: The predicate to satisfy.
+
+    Returns:
+        The filtered list.
     """
     return [x for x in self if p(x)]
 
 
-def flat_map(self: List[__A], f: Callable[[__A], List[__B]]) -> List[__B]:
+def flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
     """
     Builds a new list by applying a function to all elements of this list and using the elements of the resulting collections.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new list.
     """
     return [y for x in self for y in f(x)]
 
 
-def flatten(self: List[__A]) -> List[__B]:
+def flatten(self: List[A]) -> List[B]:
     """
     Converts this list of lists into a list formed by the elements of these lists.
+
+    Returns:
+        The flattened list.
     """
     return [y for x in self for y in x]
 
 
-def contains(self: List[__A], elem: __A) -> bool:
+def contains(self: List[A], elem: A) -> bool:
     """
-    Tests whether this list contains a given value as element
+    Tests whether this list contains a given value as element.
+
+    Args:
+        elem: The element to look for.
+
+    Returns:
+        True if the list contains the element, False otherwise.
     """
     return elem in self
 
 
-def distinct(self: List[__A]) -> List[__A]:
+def distinct(self: List[A]) -> List[A]:
     """
     Selects all the elements of this list ignoring the duplicates.
+
+    Returns:
+        The list without duplicates.
     """
     return list(set(self))
 
 
-def foreach(self: List[__A], f: Callable[[__A], __U]) -> None:
+def foreach(self: List[A], f: Callable[[A], U]) -> None:
     """
     Apply f to each element for its side effects.
+
+    Args:
+        f: The function to apply to all elements for its side effects.
     """
     [f(x) for x in self]
 
 
-def group_by(self: List[__A], f: Callable[[__A], __K]) -> Dict[__K, List[__A]]:
+def group_by(self: List[A], f: Callable[[A], K]) -> Dict[K, List[A]]:
     """
-    Partitions this list into a map of lists according to some discriminator function.
+    Partitions this list into a dict of lists according to some discriminator function.
+
+    Args:
+        f: The grouping function.
+
+    Returns:
+        A dictionary where elements are grouped according to the grouping function.
     """
     d = defaultdict(list)
     for x in self:
@@ -68,23 +107,35 @@ def group_by(self: List[__A], f: Callable[[__A], __K]) -> Dict[__K, List[__A]]:
     return d
 
 
-def is_empty(self: List[__A]) -> bool:
+def is_empty(self: List[A]) -> bool:
     """
     Tests whether the list is empty.
+
+    Returns:
+        True if the list is empty, False otherwise.
     """
     return len(self) == 0
 
 
-def size(self: List[__A]) -> int:
+def size(self: List[A]) -> int:
     """
     Computes the size of this list.
+
+    Returns:
+        The size of the list.
     """
     return len(self)
 
 
-def find(self: List[__A], p: Callable[[__A], bool]) -> Union[__A, None]:
+def find(self: List[A], p: Callable[[A], bool]) -> Optional[A]:
     """
     Finds the first element of the list satisfying a predicate, if any.
+
+    Args:
+        p: The predicate to satisfy.
+
+    Returns:
+        The first element satisfying the predicate, otherwise None.
     """
     for x in self:
         if p(x):
@@ -92,9 +143,15 @@ def find(self: List[__A], p: Callable[[__A], bool]) -> Union[__A, None]:
     return None
 
 
-def index_of(self: List[__A], elem: __A) -> int:
+def index_of(self: List[A], elem: A) -> int:
     """
-    Finds index of first occurrence of some value in this list. Returns -1 if non exists.
+    Finds index of first occurrence of some value in this list. Returns -1 if none exists.
+
+    Args:
+        elem: The element whose index is to find.
+
+    Returns:
+        The index of the first occurrence of the element, or -1 if it does not exists.
     """
     for i, x in enumerate(self):
         if x == elem:
@@ -102,7 +159,10 @@ def index_of(self: List[__A], elem: __A) -> int:
     return -1
 
 
-def curse_list():
+def extend_list():
+    """
+    Extends the list built-in type with methods.
+    """
     curse(list, "map", map)
     curse(list, "filter", filter)
     curse(list, "flat_map", flat_map)
