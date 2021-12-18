@@ -14,9 +14,6 @@ formats:
 python:
   version: 3.8
   install:
-    - method: pip
-      path: .
-      extra_requirements:
-        - dev
+    - requirements: development.txt
     - method: setuptools
       path: .
