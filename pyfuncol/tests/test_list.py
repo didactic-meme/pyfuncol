@@ -50,3 +50,9 @@ def test_find():
 def test_index_of():
     assert l.index_of(3) == 2
     assert l.index_of(42) == -1
+
+
+def test_foreach():
+    tester = []
+    l.foreach(lambda x: tester.append(x))
+    assert tester == l
