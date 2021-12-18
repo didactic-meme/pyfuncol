@@ -1,6 +1,7 @@
 # pyfuncol
 
 ![CI](https://github.com/Gondolav/pyfuncol/actions/workflows/python-app.yml/badge.svg)
+![PyPI](https://img.shields.io/pypi/v/pyfuncol?color=blue)
 [![GitHub license](https://img.shields.io/github/license/Gondolav/pyfuncol)](https://github.com/Gondolav/pyfuncol/blob/main/LICENSE)
 
 A Python functional collections library. It extends collections built-in types through [Forbidden Fruit](https://github.com/clarete/forbiddenfruit) with useful methods to write functional Python code.
