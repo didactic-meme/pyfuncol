@@ -107,6 +107,25 @@ def to_list(self: Dict[A, B]) -> List[Tuple[A, B]]:
     """
     return [(k, v) for k, v in self.items()]
 
+def count(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> int:
+    """
+    Counts the number of elements in the collection which satisfy a predicate.
+
+    Note: will not terminate for infinite-sized collections.
+
+    Args:
+        p: the predicate used to test elements.
+    
+    Returns:
+        the number of elements satisfying the predicate p.
+    """
+    c = 0
+    for t in self.items():
+        if p(t):
+            c += 1
+    
+    return c
+
 
 def extend_dict():
     """
@@ -120,3 +139,4 @@ def extend_dict():
     curse(dict, "is_empty", is_empty)
     curse(dict, "map", map)
     curse(dict, "to_list", to_list)
+    curse(dict, "count", count)

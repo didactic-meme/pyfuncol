@@ -37,3 +37,6 @@ def test_map():
 
 def test_to_list():
     assert d.to_list() == [("a", 1), ("b", 2), ("c", 3)]
+
+def test_count():
+    assert d.count(lambda kv : (kv[0] == "a" or kv[0] == "b") and kv[1] <= 3) == 2
