@@ -5,7 +5,15 @@
 [![Documentation Status](https://readthedocs.org/projects/pyfuncol/badge/?version=latest)](https://pyfuncol.readthedocs.io/en/latest/?badge=latest)
 [![GitHub license](https://img.shields.io/github/license/Gondolav/pyfuncol)](https://github.com/Gondolav/pyfuncol/blob/main/LICENSE)
 
-A Python functional collections library. It extends collections built-in types through [Forbidden Fruit](https://github.com/clarete/forbiddenfruit) with useful methods to write functional Python code.
+- [pyfuncol](#pyfuncol)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [API](#api)
+  - [Documentation](#documentation)
+  - [Compatibility](#compatibility)
+  - [License](#license)
+
+A Python functional collections library. It _extends_ collections built-in types with useful methods to write functional Python code. It uses [Forbidden Fruit](https://github.com/clarete/forbiddenfruit) under the hood.
 
 ## Installation
 
