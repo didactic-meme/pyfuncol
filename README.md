@@ -39,11 +39,11 @@ import pyfuncol
 
 ### API
 
-For lists: `map`, `filter`, `flat_map`, `flatten`, `contains`, `distinct`, `foreach`, `group_by`, `is_empty`, `size`, `find`, `index_of`.
+For lists, please refer to the [docs](https://pyfuncol.readthedocs.io/en/latest/pyfuncol.html#module-pyfuncol.list)
 
-For dictionaries: `map`, `filter`, `flat_map`, `contains`, `foreach`, `is_empty`, `size`, `to_list`.
+For dictionaries, please refer to the [docs](https://pyfuncol.readthedocs.io/en/latest/pyfuncol.html#module-pyfuncol.dict)
 
-For more details, look at the [API reference](https://pyfuncol.readthedocs.io/en/latest/modules.html).
+For more details, please have a look at the [API reference](https://pyfuncol.readthedocs.io/en/latest/modules.html).
 
 ## Documentation
 

@@ -1,4 +1,5 @@
 import pyfuncol
+import pytest
 
 l = [1, 2, 3]
 
@@ -57,3 +58,79 @@ def test_foreach():
     tester = []
     l.foreach(lambda x: tester.append(x))
     assert tester == l
+
+
+def test_fold_left_plus():
+    a = l.fold_left(0, lambda acc, n: acc + n)
+    assert a == 6
+
+
+def test_fold_left_concat():
+    a = l.fold_left("", lambda acc, n: acc + str(n))
+    assert a == "123"
+
+
+def test_fold_right_plus():
+    a = l.fold_right(0, lambda n, acc: acc + n)
+    assert a == 6
+
+
+def test_fold_right_concat():
+    a = l.fold_right("", lambda n, acc: acc + str(n))
+    assert a == "321"
+
+
+def test_forall_gt_zero():
+    a = l.forall(lambda n: n > 0)
+    assert a == True
+
+
+def test_forall_gt_two():
+    a = l.forall(lambda n: n > 2)
+    assert a == False
+
+
+def test_head():
+    h = l.head()
+    assert h == 1
+
+
+def test_head_empty():
+    l = []
+    with pytest.raises(IndexError):
+        l.head()
+
+
+def test_tail():
+    t = l.tail()
+    assert t == [2, 3]
+
+
+def test_tail_empty():
+    l = []
+    with pytest.raises(IndexError):
+        l.tail()
+
+
+def test_take_neg():
+    a = l.take(-1)
+    assert a == []
+
+
+def test_take_greater_len():
+    a = l.take(4)
+    assert a == l
+
+
+def test_take_smaller_len():
+    a = l.take(2)
+    assert a == [1, 2]
+
+
+def test_length():
+    a = l.length()
+    assert a == 3
+
+
+def test_length_equal_size():
+    assert l.size() == l.length()
