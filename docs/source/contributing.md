@@ -18,6 +18,12 @@ For formatting and code style, we use [black](https://github.com/psf/black). Doc
 
 To run the tests, execute `pytest` at the root of the project.
 
+To run the tests with coverage enabled, execute:
+
+```shell
+pytest --cov-config=.coveragerc --cov=pyfuncol --cov-report=xml
+```
+
 ## Docs
 
 The docs are hosted on [Read the Docs](https://pyfuncol.readthedocs.io/en/latest/). Source files are in `docs/source/`.
