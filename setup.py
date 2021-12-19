@@ -15,7 +15,7 @@ setup(
     packages=find_packages(exclude=["contrib", "docs", "tests*", "test"]),
     version="0.1",
     install_requires=["forbiddenfruit"],
-    extras_requires={"dev": ["pytest", "myst-parser"]},
+    extras_requires={"dev": ["pytest", "myst-parser", "black", "Sphinx", "sphinx-rtd-theme"]},
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
