@@ -107,6 +107,7 @@ def to_list(self: Dict[A, B]) -> List[Tuple[A, B]]:
     """
     return [(k, v) for k, v in self.items()]
 
+
 def count(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> int:
     """
     Counts the number of elements in the collection which satisfy a predicate.
@@ -114,17 +115,18 @@ def count(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> int:
     Note: will not terminate for infinite-sized collections.
 
     Args:
-        p: the predicate used to test elements.
-    
+        p: The predicate used to test elements.
+
     Returns:
-        the number of elements satisfying the predicate p.
+        The number of elements satisfying the predicate p.
     """
     c = 0
     for t in self.items():
         if p(t):
             c += 1
-    
+
     return c
+
 
 def fold_left(self: Dict[A, B], z: B, op: Callable[[B, Tuple[A, B]], B]) -> B:
     """
@@ -135,11 +137,11 @@ def fold_left(self: Dict[A, B], z: B, op: Callable[[B, Tuple[A, B]], B]) -> B:
     Note: might return different results for different runs, unless the underlying collection type is ordered or the operator is associative and commutative.
 
     Args:
-        z: the start value.
-        op: the binary operator.
-    
+        z: The start value.
+        op: The binary operator.
+
     Returns:
-        the result of inserting op between consecutive elements of this collection, going left to right with the start value z on the left:
+        The result of inserting op between consecutive elements of this collection, going left to right with the start value z on the left:
 
         op(...op(z, x_1), x_2, ..., x_n)
         where x1, ..., xn are the elements of this collection. Returns z if this collection is empty.
@@ -147,8 +149,9 @@ def fold_left(self: Dict[A, B], z: B, op: Callable[[B, Tuple[A, B]], B]) -> B:
     acc = z
     for t in self.items():
         acc = op(acc, t)
-    
+
     return acc
+
 
 def fold_right(self: Dict[A, B], z: B, op: Callable[[Tuple[A, B], B], B]) -> B:
     """
@@ -161,7 +164,7 @@ def fold_right(self: Dict[A, B], z: B, op: Callable[[Tuple[A, B], B], B]) -> B:
     Args:
         z: The start value.
         op: The binary operator.
-    
+
     Returns:
         The result of inserting op between consecutive elements of this collection, going right to left with the start value z on the right:
 
@@ -171,8 +174,9 @@ def fold_right(self: Dict[A, B], z: B, op: Callable[[Tuple[A, B], B], B]) -> B:
     acc = z
     for t in reversed(self.items()):
         acc = op(t, acc)
-    
+
     return acc
+
 
 def forall(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> bool:
     """
@@ -182,7 +186,7 @@ def forall(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> bool:
 
     Args:
         p: The predicate used to test elements.
-    
+
     Returns:
         True if this collection is empty or the given predicate p holds for all elements of this collection, otherwise False.
     """
@@ -190,6 +194,7 @@ def forall(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> bool:
         if not p(t):
             return False
     return True
+
 
 def find(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Optional[Tuple[A, B]]:
     """
@@ -201,7 +206,7 @@ def find(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Optional[Tuple[A
 
     Args:
         p: The predicate used to test elements.
-    
+
     Returns:
         An option value containing the first element in the collection that satisfies p, or None if none exists.
     """
@@ -211,19 +216,18 @@ def find(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Optional[Tuple[A
 
     return None
 
+
 def filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
     """
     Selects all elements of this iterable collection which do not satisfy a predicate.
 
-    Args: 
+    Args:
         p: The predicate to satisfy.
-    
+
     Returns:
         The filtered dict.
     """
     return {k: v for k, v in self.items() if not p((k, v))}
-
-
 
 
 def extend_dict():
