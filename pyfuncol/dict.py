@@ -174,6 +174,23 @@ def fold_right(self: Dict[A, B], z: B, op: Callable[[Tuple[A, B], B], B]) -> B:
     
     return acc
 
+def forall(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> bool:
+    """
+    Tests whether a predicate holds for all elements of this collection.
+
+    Note: may not terminate for infinite-sized collections.
+
+    Args:
+        p: the predicate used to test elements.
+    
+    Returns:
+        true if this collection is empty or the given predicate p holds for all elements of this collection, otherwise false.
+    """
+    for t in self.items():
+        if not p(t):
+            return False
+    return True
+
 
 def extend_dict():
     """
@@ -190,3 +207,4 @@ def extend_dict():
     curse(dict, "count", count)
     curse(dict, "fold_left", fold_left)
     curse(dict, "fold_right", fold_right)
+    curse(dict, "forall", forall)

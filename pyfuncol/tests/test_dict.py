@@ -46,3 +46,9 @@ def test_fold_left():
 
 def test_fold_right():
     assert d.fold_right("", lambda kv, acc: acc + kv[0] + str(kv[1])) == "c3b2a1"
+
+def test_forall():
+    assert d.forall(lambda kv: kv[1] <= 3) == True
+
+def test_forall_false():
+    assert d.forall(lambda kv: kv[1] < 2) == False
