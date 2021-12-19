@@ -20,6 +20,15 @@ pyfuncol.list module
    :undoc-members:
    :show-inheritance:
 
+pyfuncol.set module
+--------------------
+
+.. automodule:: pyfuncol.set
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 Module contents
 ---------------
 
