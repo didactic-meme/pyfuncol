@@ -1,4 +1,6 @@
 -r requirements.txt
+black==21.12b0
 pytest==6.2.4
 myst-parser==0.16.1
-black==21.12b0
+Sphinx==4.3.1
+sphinx-rtd-theme==1.0.0
