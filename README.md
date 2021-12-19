@@ -30,6 +30,9 @@ import pyfuncol
 [1, 2, 3, 4].map(lambda x: x * 2).filter(lambda x: x > 4)
 # [6, 8]
 
+{1, 2, 3, 4}.map(lambda x: x * 2).filter(lambda x: x > 4)
+# {6, 8}
+
 ["abc", "def", "e"].group_by(lambda s: len(s))
 # {3: ["abc", "def"], 1: ["e"]}
 
@@ -42,6 +45,8 @@ import pyfuncol
 For lists, please refer to the [docs](https://pyfuncol.readthedocs.io/en/latest/pyfuncol.html#module-pyfuncol.list).
 
 For dictionaries, please refer to the [docs](https://pyfuncol.readthedocs.io/en/latest/pyfuncol.html#module-pyfuncol.dict).
+
+For sets, please refer to the [docs](https://pyfuncol.readthedocs.io/en/latest/pyfuncol.html#module-pyfuncol.set).
 
 For more details, please have a look at the [API reference](https://pyfuncol.readthedocs.io/en/latest/modules.html).
 
