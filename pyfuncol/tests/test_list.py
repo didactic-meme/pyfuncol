@@ -82,3 +82,19 @@ def test_forall_gt_zero():
 def test_forall_gt_two():
     a = l.forall(lambda n: n > 2)
     assert not a
+
+def test_head():
+    h = l.head()
+    assert h == 1
+
+def test_head_empty():
+    l = []
+    flag = False
+    try:
+        l.head()
+    except IndexError:
+        flag = True
+    except:
+        flag = False
+
+    assert flag

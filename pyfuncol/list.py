@@ -209,6 +209,19 @@ def forall(self: List[A], p: Callable[[A], bool]) -> bool:
     
     return True
 
+def head(self: List[A]) -> A:
+    """
+    Selects the first element of this iterable collection.
+
+    Note: might return different results for different runs, unless the underlying collection type is ordered.
+
+    Exceptions thrown:
+        IndexError if the iterable collection is empty.
+    """
+    if not self:
+        raise IndexError()
+    return self[0]
+
 def extend_list():
     """
     Extends the list built-in type with methods.
@@ -228,3 +241,4 @@ def extend_list():
     curse(list, "fold_left", fold_left)
     curse(list, "fold_right", fold_right)
     curse(list, "forall", forall)
+    curse(list, "head", head)
