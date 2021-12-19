@@ -74,3 +74,11 @@ def test_fold_right_plus():
 def test_fold_right_concat():
     a = l.fold_right("", lambda n, acc: acc + str(n))
     assert a == "321"
+
+def test_forall_gt_zero():
+    a = l.forall(lambda n: n > 0)
+    assert a
+
+def test_forall_gt_two():
+    a = l.forall(lambda n: n > 2)
+    assert not a

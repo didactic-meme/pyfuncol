@@ -195,6 +195,20 @@ def fold_right(self: List[A], z: B, op: Callable[[A, B], B]) -> B:
         acc = op(x, acc)
     return acc
 
+def forall(self: List[A], p: Callable[[A], bool]) -> bool:
+    """
+    Tests whether a predicate holds for all elements of this list.
+
+    Args:
+        p: the predicate used to test elements.
+        returns: true if this list is empty or the given predicate p holds for all elements of this list, otherwise false.
+    """
+    for x in self:
+        if not p(x):
+            return False
+    
+    return True
+
 def extend_list():
     """
     Extends the list built-in type with methods.
@@ -213,3 +227,4 @@ def extend_list():
     curse(list, "index_of", index_of)
     curse(list, "fold_left", fold_left)
     curse(list, "fold_right", fold_right)
+    curse(list, "forall", forall)
