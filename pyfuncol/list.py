@@ -158,6 +158,7 @@ def index_of(self: List[A], elem: A) -> int:
             return i
     return -1
 
+
 def fold_left(self: List[A], z: B, op: Callable[[B, A], B]) -> B:
     """
     Applies a binary operator to a start value and all elements of this sequence, going left to right.
@@ -176,6 +177,7 @@ def fold_left(self: List[A], z: B, op: Callable[[B, A], B]) -> B:
         acc = op(acc, x)
     return acc
 
+
 def fold_right(self: List[A], z: B, op: Callable[[A, B], B]) -> B:
     """
     Applies a binary operator to all elements of this list and a start value, going right to left.
@@ -189,11 +191,12 @@ def fold_right(self: List[A], z: B, op: Callable[[A, B], B]) -> B:
         op(x_1, op(x_2, ... op(x_n, z)...))
         where x1, ..., xn are the elements of this list. Returns z if this list is empty.
     """
-    
+
     acc = z
     for x in reversed(self):
         acc = op(x, acc)
     return acc
+
 
 def forall(self: List[A], p: Callable[[A], bool]) -> bool:
     """
@@ -201,15 +204,16 @@ def forall(self: List[A], p: Callable[[A], bool]) -> bool:
 
     Args:
         p: The predicate used to test elements.
-    
-    Returns: 
+
+    Returns:
         True if this list is empty or the given predicate p holds for all elements of this list, otherwise False.
     """
     for x in self:
         if not p(x):
             return False
-    
+
     return True
+
 
 def head(self: List[A]) -> A:
     """
@@ -224,6 +228,7 @@ def head(self: List[A]) -> A:
         raise IndexError()
     return self[0]
 
+
 def tail(self: List[A]) -> List[A]:
     """
     The rest of the collection without its first element.
@@ -235,23 +240,25 @@ def tail(self: List[A]) -> List[A]:
         raise IndexError()
     return self[1:]
 
+
 def take(self: List[A], n: int) -> List[A]:
     """
     Selects the first n elements.
-    
+
     Args:
         n: The number of elements to take from this list.
-    
+
     Returns:
         A list consisting only of the first n elements of this list, or else the whole list, if it has less than n elements. If n is negative, returns an empty list.
     """
-    
+
     if n < 0:
         return []
     if len(self) <= n:
         return self
-    
+
     return self[0:n]
+
 
 def length(self: List[A]) -> int:
     """
@@ -261,6 +268,7 @@ def length(self: List[A]) -> int:
         The length of the list
     """
     return len(self)
+
 
 def extend_list():
     """
