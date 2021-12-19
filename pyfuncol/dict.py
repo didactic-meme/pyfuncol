@@ -211,6 +211,20 @@ def find(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Optional[Tuple[A
 
     return None
 
+def filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
+    """
+    Selects all elements of this iterable collection which do not satisfy a predicate.
+
+    Args: 
+        p: The predicate to satisfy.
+    
+    Returns:
+        The filtered dict.
+    """
+    return {k: v for k, v in self.items() if not p((k, v))}
+
+
+
 
 def extend_dict():
     """
@@ -229,3 +243,4 @@ def extend_dict():
     curse(dict, "fold_right", fold_right)
     curse(dict, "forall", forall)
     curse(dict, "find", find)
+    curse(dict, "filter_not", filter_not)

@@ -58,3 +58,6 @@ def test_find():
 
 def test_find_none():
     assert d.find(lambda kv: kv[1] == 5) == None
+
+def test_filter_not():
+    assert d.filter_not(lambda kv: kv[1] > 1) == {"a": 1}
