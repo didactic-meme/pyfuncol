@@ -159,11 +159,11 @@ def fold_right(self: Dict[A, B], z: B, op: Callable[[Tuple[A, B], B], B]) -> B:
     Note: might return different results for different runs, unless the underlying collection type is ordered or the operator is associative and commutative.
 
     Args:
-        z: the start value.
-        op: the binary operator.
+        z: The start value.
+        op: The binary operator.
     
     Returns:
-        the result of inserting op between consecutive elements of this collection, going right to left with the start value z on the right:
+        The result of inserting op between consecutive elements of this collection, going right to left with the start value z on the right:
 
         op(x_1, op(x_2, ... op(x_n, z)...))
         where x1, ..., xn are the elements of this collection. Returns z if this collection is empty.
@@ -181,10 +181,10 @@ def forall(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> bool:
     Note: may not terminate for infinite-sized collections.
 
     Args:
-        p: the predicate used to test elements.
+        p: The predicate used to test elements.
     
     Returns:
-        true if this collection is empty or the given predicate p holds for all elements of this collection, otherwise false.
+        True if this collection is empty or the given predicate p holds for all elements of this collection, otherwise False.
     """
     for t in self.items():
         if not p(t):
@@ -200,10 +200,10 @@ def find(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Optional[Tuple[A
     Note: might return different results for different runs, unless the underlying collection type is ordered.
 
     Args:
-        p: the predicate used to test elements.
+        p: The predicate used to test elements.
     
     Returns:
-        an option value containing the first element in the collection that satisfies p, or None if none exists.
+        An option value containing the first element in the collection that satisfies p, or None if none exists.
     """
     for t in self.items():
         if p(t):
