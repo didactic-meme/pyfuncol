@@ -12,7 +12,7 @@ setup(
     maintainer_email="andrea.veneziano@icloud.com",
     license="MIT",
     keywords="functional pipeline data collection chain",
-    packages=find_packages(exclude=["contrib", "docs", "tests*", "test"]),
+    packages=find_packages(exclude=["contrib", "docs", "*tests*", "test"]),
     version="0.1",
     install_requires=["forbiddenfruit"],
     extras_requires={"dev": ["pytest", "myst-parser", "black", "Sphinx", "sphinx-rtd-theme"]},
