@@ -52,3 +52,9 @@ def test_forall():
 
 def test_forall_false():
     assert d.forall(lambda kv: kv[1] < 2) == False
+
+def test_find():
+    assert d.find(lambda kv: kv[1] == 2) == ("b", 2)
+
+def test_find_none():
+    assert d.find(lambda kv: kv[1] == 5) == None

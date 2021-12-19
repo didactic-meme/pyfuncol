@@ -1,5 +1,5 @@
 from forbiddenfruit import curse
-from typing import Callable, Dict, Tuple, TypeVar, List
+from typing import Callable, Dict, Optional, Tuple, TypeVar, List
 
 A = TypeVar("A")
 B = TypeVar("B")
@@ -191,6 +191,26 @@ def forall(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> bool:
             return False
     return True
 
+def find(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Optional[Tuple[A, B]]:
+    """
+    Finds the first element of the collection satisfying a predicate, if any.
+
+    Note: may not terminate for infinite-sized collections.
+
+    Note: might return different results for different runs, unless the underlying collection type is ordered.
+
+    Args:
+        p: the predicate used to test elements.
+    
+    Returns:
+        an option value containing the first element in the collection that satisfies p, or None if none exists.
+    """
+    for t in self.items():
+        if p(t):
+            return t
+
+    return None
+
 
 def extend_dict():
     """
@@ -208,3 +228,4 @@ def extend_dict():
     curse(dict, "fold_left", fold_left)
     curse(dict, "fold_right", fold_right)
     curse(dict, "forall", forall)
+    curse(dict, "find", find)
