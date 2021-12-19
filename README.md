@@ -41,7 +41,7 @@ import pyfuncol
 
 For lists, please refer to the [docs](https://pyfuncol.readthedocs.io/en/latest/pyfuncol.html#module-pyfuncol.list)
 
-For dictionaries, please refer to this [API reference](https://pyfuncol.readthedocs.io/en/latest/pyfuncol.html#module-pyfuncol.dict)
+For dictionaries, please refer to the [docs](https://pyfuncol.readthedocs.io/en/latest/pyfuncol.html#module-pyfuncol.dict)
 
 For more details, please have a look to [API reference](https://pyfuncol.readthedocs.io/en/latest/modules.html).
 
