@@ -126,6 +126,54 @@ def count(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> int:
     
     return c
 
+def fold_left(self: Dict[A, B], z: B, op: Callable[[B, Tuple[A, B]], B]) -> B:
+    """
+    Applies a binary operator to a start value and all elements of this collection, going left to right.
+
+    Note: will not terminate for infinite-sized collections.
+
+    Note: might return different results for different runs, unless the underlying collection type is ordered or the operator is associative and commutative.
+
+    Args:
+        z: the start value.
+        op: the binary operator.
+    
+    Returns:
+        the result of inserting op between consecutive elements of this collection, going left to right with the start value z on the left:
+
+        op(...op(z, x_1), x_2, ..., x_n)
+        where x1, ..., xn are the elements of this collection. Returns z if this collection is empty.
+    """
+    acc = z
+    for t in self.items():
+        acc = op(acc, t)
+    
+    return acc
+
+def fold_right(self: Dict[A, B], z: B, op: Callable[[Tuple[A, B], B], B]) -> B:
+    """
+    Applies a binary operator to a start value and all elements of this collection, going right to left.
+
+    Note: will not terminate for infinite-sized collections.
+
+    Note: might return different results for different runs, unless the underlying collection type is ordered or the operator is associative and commutative.
+
+    Args:
+        z: the start value.
+        op: the binary operator.
+    
+    Returns:
+        the result of inserting op between consecutive elements of this collection, going right to left with the start value z on the right:
+
+        op(x_1, op(x_2, ... op(x_n, z)...))
+        where x1, ..., xn are the elements of this collection. Returns z if this collection is empty.
+    """
+    acc = z
+    for t in reversed(self.items()):
+        acc = op(t, acc)
+    
+    return acc
+
 
 def extend_dict():
     """
@@ -140,3 +188,5 @@ def extend_dict():
     curse(dict, "map", map)
     curse(dict, "to_list", to_list)
     curse(dict, "count", count)
+    curse(dict, "fold_left", fold_left)
+    curse(dict, "fold_right", fold_right)
