@@ -1,6 +1,7 @@
 from forbiddenfruit import curse
 from collections import defaultdict
 from typing import Callable, Dict, Optional, TypeVar, List
+from multiprocess.pool import Pool
 
 A = TypeVar("A")
 B = TypeVar("B")
@@ -270,6 +271,27 @@ def length(self: List[A]) -> int:
     return len(self)
 
 
+# Parallel operations
+
+
+def par_map(self: List[A], f: Callable[[A], B]) -> List[B]:
+    """
+    Builds a new list by applying a function in parallel to all elements of this list.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new list.
+    """
+
+    with Pool() as pool:
+        if len(self) <= 50000:
+            return pool.map(f, self)
+        else:
+            return list(pool.imap(f, self))
+
+
 def extend_list():
     """
     Extends the list built-in type with methods.
@@ -293,3 +315,6 @@ def extend_list():
     curse(list, "tail", tail)
     curse(list, "take", take)
     curse(list, "length", length)
+
+    # Parallel operations
+    curse(list, "par_map", par_map)
