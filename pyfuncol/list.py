@@ -251,6 +251,15 @@ def take(self: List[A], n: int) -> List[A]:
     
     return self[0:n]
 
+def length(self: List[A]) -> int:
+    """
+    The length (number of elements) of the list. size is an alias for length in Seq collections.
+
+    Returns:
+        the length of the list
+    """
+    return len(self)
+
 def extend_list():
     """
     Extends the list built-in type with methods.
@@ -273,3 +282,4 @@ def extend_list():
     curse(list, "head", head)
     curse(list, "tail", tail)
     curse(list, "take", take)
+    curse(list, "length", length)

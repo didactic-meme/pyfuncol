@@ -127,3 +127,7 @@ def test_take_greater_len():
 def test_take_smaller_len():
     a = l.take(2)
     assert a == [1,2]
+
+def test_length():
+    a = l.length()
+    assert a == 3
