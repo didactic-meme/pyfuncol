@@ -24,7 +24,7 @@ author = "Andrea Veneziano"
 description = "Functional collections extension functions for Python"
 
 # The full version, including alpha/beta/rc tags
-release = "0.1"
+release = "1.0"
 
 
 # -- General configuration ---------------------------------------------------
