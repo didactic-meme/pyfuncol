@@ -233,6 +233,24 @@ def tail(self: List[A]) -> List[A]:
         raise IndexError()
     return self[1:]
 
+def take(self: List[A], n: int) -> List[A]:
+    """
+    Selects the first n elements.
+    
+    Args:
+        n: the number of elements to take from this list.
+    
+    Returns:
+        a list consisting only of the first n elements of this list, or else the whole list, if it has less than n elements. If n is negative, returns an empty list.
+    """
+    
+    if n < 0:
+        return []
+    if len(self) <= n:
+        return self
+    
+    return self[0:n]
+
 def extend_list():
     """
     Extends the list built-in type with methods.
@@ -254,3 +272,4 @@ def extend_list():
     curse(list, "forall", forall)
     curse(list, "head", head)
     curse(list, "tail", tail)
+    curse(list, "take", take)

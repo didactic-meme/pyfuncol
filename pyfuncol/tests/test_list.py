@@ -114,3 +114,16 @@ def test_tail_empty():
         flag = False
 
     assert flag
+
+
+def test_take_neg():
+    a = l.take(-1)
+    assert a == []
+
+def test_take_greater_len():
+    a = l.take(4)
+    assert a == l
+
+def test_take_smaller_len():
+    a = l.take(2)
+    assert a == [1,2]
