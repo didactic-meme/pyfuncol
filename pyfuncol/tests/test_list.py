@@ -57,3 +57,8 @@ def test_foreach():
     tester = []
     l.foreach(lambda x: tester.append(x))
     assert tester == l
+
+
+def test_fold_left():
+    a = l.fold_left(0, lambda acc, n: acc + n)
+    assert a == 6

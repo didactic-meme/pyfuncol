@@ -158,6 +158,22 @@ def index_of(self: List[A], elem: A) -> int:
             return i
     return -1
 
+def fold_left(self: List[A], z: B, op: Callable[[B, A], B]) -> B:
+    """
+    Applies a binary operator to a start value and all elements of this sequence, going left to right.
+
+    Args:
+        z: start value
+        op: binary operation
+
+    Returns:
+        the result of inserting op between consecutive elements of this sequence, going left to right with the start value z on the left:
+        op(...op(z, x_1), x_2, ..., x_n)
+    """
+    acc = z
+    for x in self:
+        acc = op(acc, x)
+    return acc
 
 def extend_list():
     """
@@ -175,3 +191,4 @@ def extend_list():
     curse(list, "size", size)
     curse(list, "find", find)
     curse(list, "index_of", index_of)
+    curse(list, "fold_left", fold_left)
