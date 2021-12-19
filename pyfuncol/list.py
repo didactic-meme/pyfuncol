@@ -163,11 +163,11 @@ def fold_left(self: List[A], z: B, op: Callable[[B, A], B]) -> B:
     Applies a binary operator to a start value and all elements of this sequence, going left to right.
 
     Args:
-        z: start value
-        op: binary operation
+        z: The start value.
+        op: The binary operation.
 
     Returns:
-        the result of inserting op between consecutive elements of this sequence, going left to right with the start value z on the left:
+        The result of inserting op between consecutive elements of this sequence, going left to right with the start value z on the left:
         op(...op(z, x_1), x_2, ..., x_n)
         where x1, ..., xn are the elements of this sequence. Returns z if this sequence is empty.
     """
@@ -181,11 +181,11 @@ def fold_right(self: List[A], z: B, op: Callable[[A, B], B]) -> B:
     Applies a binary operator to all elements of this list and a start value, going right to left.
 
     Args:
-        z: start value
-        op: binary operation
+        z: The start value.
+        op: The binary operation.
 
     Returns:
-        the result of inserting op between consecutive elements of this list, going right to left with the start value z on the right:
+        The result of inserting op between consecutive elements of this list, going right to left with the start value z on the right:
         op(x_1, op(x_2, ... op(x_n, z)...))
         where x1, ..., xn are the elements of this list. Returns z if this list is empty.
     """
@@ -200,8 +200,10 @@ def forall(self: List[A], p: Callable[[A], bool]) -> bool:
     Tests whether a predicate holds for all elements of this list.
 
     Args:
-        p: the predicate used to test elements.
-        returns: true if this list is empty or the given predicate p holds for all elements of this list, otherwise false.
+        p: The predicate used to test elements.
+    
+    Returns: 
+        True if this list is empty or the given predicate p holds for all elements of this list, otherwise False.
     """
     for x in self:
         if not p(x):
@@ -215,8 +217,8 @@ def head(self: List[A]) -> A:
 
     Note: might return different results for different runs, unless the underlying collection type is ordered.
 
-    Exceptions thrown:
-        IndexError if the iterable collection is empty.
+    Raises:
+        IndexError: If the iterable collection is empty.
     """
     if not self:
         raise IndexError()
@@ -226,8 +228,8 @@ def tail(self: List[A]) -> List[A]:
     """
     The rest of the collection without its first element.
 
-    Exceptions thrown:
-        IndexError if the iterable collection is empty.
+    Raises:
+        IndexError: If the iterable collection is empty.
     """
     if not self:
         raise IndexError()
@@ -238,10 +240,10 @@ def take(self: List[A], n: int) -> List[A]:
     Selects the first n elements.
     
     Args:
-        n: the number of elements to take from this list.
+        n: The number of elements to take from this list.
     
     Returns:
-        a list consisting only of the first n elements of this list, or else the whole list, if it has less than n elements. If n is negative, returns an empty list.
+        A list consisting only of the first n elements of this list, or else the whole list, if it has less than n elements. If n is negative, returns an empty list.
     """
     
     if n < 0:
@@ -253,10 +255,10 @@ def take(self: List[A], n: int) -> List[A]:
 
 def length(self: List[A]) -> int:
     """
-    The length (number of elements) of the list. size is an alias for length in Seq collections.
+    Returns the length (number of elements) of the list. `size` is an alias for length.
 
     Returns:
-        the length of the list
+        The length of the list
     """
     return len(self)
 

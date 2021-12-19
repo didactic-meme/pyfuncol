@@ -1,4 +1,5 @@
 import pyfuncol
+import pytest
 
 l = [1, 2, 3]
 
@@ -77,11 +78,11 @@ def test_fold_right_concat():
 
 def test_forall_gt_zero():
     a = l.forall(lambda n: n > 0)
-    assert a
+    assert a == True
 
 def test_forall_gt_two():
     a = l.forall(lambda n: n > 2)
-    assert not a
+    assert a == False
 
 def test_head():
     h = l.head()
@@ -89,15 +90,8 @@ def test_head():
 
 def test_head_empty():
     l = []
-    flag = False
-    try:
+    with pytest.raises(IndexError):
         l.head()
-    except IndexError:
-        flag = True
-    except:
-        flag = False
-
-    assert flag
 
 def test_tail():
     t = l.tail()
@@ -105,15 +99,8 @@ def test_tail():
 
 def test_tail_empty():
     l = []
-    flag = False
-    try:
+    with pytest.raises(IndexError):
         l.tail()
-    except IndexError:
-        flag = True
-    except:
-        flag = False
-
-    assert flag
 
 
 def test_take_neg():
@@ -131,3 +118,6 @@ def test_take_smaller_len():
 def test_length():
     a = l.length()
     assert a == 3
+
+def test_length_equal_size():
+    assert l.size() == l.length()
