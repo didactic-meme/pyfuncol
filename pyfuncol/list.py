@@ -169,10 +169,30 @@ def fold_left(self: List[A], z: B, op: Callable[[B, A], B]) -> B:
     Returns:
         the result of inserting op between consecutive elements of this sequence, going left to right with the start value z on the left:
         op(...op(z, x_1), x_2, ..., x_n)
+        where x1, ..., xn are the elements of this sequence. Returns z if this sequence is empty.
     """
     acc = z
     for x in self:
         acc = op(acc, x)
+    return acc
+
+def fold_right(self: List[A], z: B, op: Callable[[A, B], B]) -> B:
+    """
+    Applies a binary operator to all elements of this list and a start value, going right to left.
+
+    Args:
+        z: start value
+        op: binary operation
+
+    Returns:
+        the result of inserting op between consecutive elements of this list, going right to left with the start value z on the right:
+        op(x_1, op(x_2, ... op(x_n, z)...))
+        where x1, ..., xn are the elements of this list. Returns z if this list is empty.
+    """
+    
+    acc = z
+    for x in reversed(self):
+        acc = op(x, acc)
     return acc
 
 def extend_list():
@@ -192,3 +212,4 @@ def extend_list():
     curse(list, "find", find)
     curse(list, "index_of", index_of)
     curse(list, "fold_left", fold_left)
+    curse(list, "fold_right", fold_right)

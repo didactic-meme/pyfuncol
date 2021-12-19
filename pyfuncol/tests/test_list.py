@@ -59,6 +59,18 @@ def test_foreach():
     assert tester == l
 
 
-def test_fold_left():
+def test_fold_left_plus():
     a = l.fold_left(0, lambda acc, n: acc + n)
     assert a == 6
+
+def test_fold_left_concat():
+    a = l.fold_left("", lambda acc, n: acc + str(n))
+    assert a == "123"
+
+def test_fold_right_plus():
+    a = l.fold_right(0, lambda n, acc: acc + n)
+    assert a == 6
+
+def test_fold_right_concat():
+    a = l.fold_right("", lambda n, acc: acc + str(n))
+    assert a == "321"
