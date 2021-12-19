@@ -222,6 +222,17 @@ def head(self: List[A]) -> A:
         raise IndexError()
     return self[0]
 
+def tail(self: List[A]) -> List[A]:
+    """
+    The rest of the collection without its first element.
+
+    Exceptions thrown:
+        IndexError if the iterable collection is empty.
+    """
+    if not self:
+        raise IndexError()
+    return self[1:]
+
 def extend_list():
     """
     Extends the list built-in type with methods.
@@ -242,3 +253,4 @@ def extend_list():
     curse(list, "fold_right", fold_right)
     curse(list, "forall", forall)
     curse(list, "head", head)
+    curse(list, "tail", tail)

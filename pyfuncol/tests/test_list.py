@@ -98,3 +98,19 @@ def test_head_empty():
         flag = False
 
     assert flag
+
+def test_tail():
+    t = l.tail()
+    assert t == [2, 3]
+
+def test_tail_empty():
+    l = []
+    flag = False
+    try:
+        l.tail()
+    except IndexError:
+        flag = True
+    except:
+        flag = False
+
+    assert flag
