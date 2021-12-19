@@ -4,8 +4,6 @@ import pytest
 s = {1, 2, 3}
 
 
-
-
 def test_map():
     assert s.map(lambda x: x * 2) == {2, 4, 6}
 
@@ -43,6 +41,7 @@ def test_find():
     assert s.find(lambda x: x >= 3) == 3
     assert s.find(lambda x: x < 0) == None
 
+
 def test_foreach():
     tester = set()
     s.foreach(lambda x: tester.add(x))
@@ -56,7 +55,9 @@ def test_fold_left_plus():
 
 def test_fold_left_concat():
     a = s.fold_left("", lambda acc, n: acc + str(n))
-    assert a == "123" or a == "321" or a == "132" or a == "213" or a == "231" or a == "312"
+    assert (
+        a == "123" or a == "321" or a == "132" or a == "213" or a == "231" or a == "312"
+    )
 
 
 def test_fold_right_plus():
@@ -66,7 +67,9 @@ def test_fold_right_plus():
 
 def test_fold_right_concat():
     a = s.fold_right("", lambda n, acc: acc + str(n))
-    assert a == "321" or a == "123" or a == "132" or a == "213" or a == "231" or a == "312"
+    assert (
+        a == "321" or a == "123" or a == "132" or a == "213" or a == "231" or a == "312"
+    )
 
 
 def test_forall_gt_zero():
@@ -78,6 +81,7 @@ def test_forall_gt_two():
     a = s.forall(lambda n: n > 2)
     assert a == False
 
+
 def test_length():
     a = s.length()
     assert a == 3
@@ -85,4 +89,3 @@ def test_length():
 
 def test_length_equal_size():
     assert s.size() == s.length()
-
