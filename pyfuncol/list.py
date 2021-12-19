@@ -159,6 +159,117 @@ def index_of(self: List[A], elem: A) -> int:
     return -1
 
 
+def fold_left(self: List[A], z: B, op: Callable[[B, A], B]) -> B:
+    """
+    Applies a binary operator to a start value and all elements of this sequence, going left to right.
+
+    Args:
+        z: The start value.
+        op: The binary operation.
+
+    Returns:
+        The result of inserting op between consecutive elements of this sequence, going left to right with the start value z on the left:
+        op(...op(z, x_1), x_2, ..., x_n)
+        where x1, ..., xn are the elements of this sequence. Returns z if this sequence is empty.
+    """
+    acc = z
+    for x in self:
+        acc = op(acc, x)
+    return acc
+
+
+def fold_right(self: List[A], z: B, op: Callable[[A, B], B]) -> B:
+    """
+    Applies a binary operator to all elements of this list and a start value, going right to left.
+
+    Args:
+        z: The start value.
+        op: The binary operation.
+
+    Returns:
+        The result of inserting op between consecutive elements of this list, going right to left with the start value z on the right:
+        op(x_1, op(x_2, ... op(x_n, z)...))
+        where x1, ..., xn are the elements of this list. Returns z if this list is empty.
+    """
+
+    acc = z
+    for x in reversed(self):
+        acc = op(x, acc)
+    return acc
+
+
+def forall(self: List[A], p: Callable[[A], bool]) -> bool:
+    """
+    Tests whether a predicate holds for all elements of this list.
+
+    Args:
+        p: The predicate used to test elements.
+
+    Returns:
+        True if this list is empty or the given predicate p holds for all elements of this list, otherwise False.
+    """
+    for x in self:
+        if not p(x):
+            return False
+
+    return True
+
+
+def head(self: List[A]) -> A:
+    """
+    Selects the first element of this iterable collection.
+
+    Note: might return different results for different runs, unless the underlying collection type is ordered.
+
+    Raises:
+        IndexError: If the iterable collection is empty.
+    """
+    if not self:
+        raise IndexError()
+    return self[0]
+
+
+def tail(self: List[A]) -> List[A]:
+    """
+    The rest of the collection without its first element.
+
+    Raises:
+        IndexError: If the iterable collection is empty.
+    """
+    if not self:
+        raise IndexError()
+    return self[1:]
+
+
+def take(self: List[A], n: int) -> List[A]:
+    """
+    Selects the first n elements.
+
+    Args:
+        n: The number of elements to take from this list.
+
+    Returns:
+        A list consisting only of the first n elements of this list, or else the whole list, if it has less than n elements. If n is negative, returns an empty list.
+    """
+
+    if n < 0:
+        return []
+    if len(self) <= n:
+        return self
+
+    return self[0:n]
+
+
+def length(self: List[A]) -> int:
+    """
+    Returns the length (number of elements) of the list. `size` is an alias for length.
+
+    Returns:
+        The length of the list
+    """
+    return len(self)
+
+
 def extend_list():
     """
     Extends the list built-in type with methods.
@@ -175,3 +286,10 @@ def extend_list():
     curse(list, "size", size)
     curse(list, "find", find)
     curse(list, "index_of", index_of)
+    curse(list, "fold_left", fold_left)
+    curse(list, "fold_right", fold_right)
+    curse(list, "forall", forall)
+    curse(list, "head", head)
+    curse(list, "tail", tail)
+    curse(list, "take", take)
+    curse(list, "length", length)
