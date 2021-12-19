@@ -13,6 +13,7 @@ Welcome to pyfuncol's documentation!
    introduction
    get_started
    examples
+   contributing
    modules
 
 

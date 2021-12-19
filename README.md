@@ -11,6 +11,7 @@
     - [API](#api)
   - [Documentation](#documentation)
   - [Compatibility](#compatibility)
+  - [Contributing](#contributing)
   - [License](#license)
 
 A Python functional collections library. It _extends_ collections built-in types with useful methods to write functional Python code. It uses [Forbidden Fruit](https://github.com/clarete/forbiddenfruit) under the hood.
@@ -42,7 +43,7 @@ For lists: `map`, `filter`, `flat_map`, `flatten`, `contains`, `distinct`, `fore
 
 For dictionaries: `map`, `filter`, `flat_map`, `contains`, `foreach`, `is_empty`, `size`, `to_list`.
 
-For more details, look at the [API reference](https://pyfuncol.readthedocs.io/#modules).
+For more details, look at the [API reference](https://pyfuncol.readthedocs.io/en/latest/modules.html).
 
 ## Documentation
 
@@ -52,6 +53,10 @@ See <https://pyfuncol.readthedocs.io/>.
 
 Since it depends on [Forbidden Fruit](https://github.com/clarete/forbiddenfruit), it only works on CPython.
 
+## Contributing
+
+See the [contributing guide](https://github.com/Gondolav/pyfuncol/blob/main/CONTRIBUTING.md) for detailed instructions on how to get started with the project.
+
 ## License
 
-pyfuncol is licensed under the [MIT license](LICENSE).
+pyfuncol is licensed under the [MIT license](https://github.com/Gondolav/pyfuncol/blob/main/LICENSE).
