@@ -47,7 +47,7 @@ For lists, please refer to the [docs](https://pyfuncol.readthedocs.io/en/latest/
 
 For dictionaries, please refer to the [docs](https://pyfuncol.readthedocs.io/en/latest/pyfuncol.html#module-pyfuncol.dict).
 
-For sets, please refer to the [docs](https://pyfuncol.readthedocs.io/en/latest/pyfuncol.html#module-pyfuncol.set).
+For sets and frozensets, please refer to the [docs](https://pyfuncol.readthedocs.io/en/latest/pyfuncol.html#module-pyfuncol.set).
 
 For more details, please have a look at the [API reference](https://pyfuncol.readthedocs.io/en/latest/modules.html).
 
