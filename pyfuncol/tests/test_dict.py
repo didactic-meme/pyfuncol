@@ -1,3 +1,5 @@
+from collections import OrderedDict, defaultdict
+from typing import DefaultDict
 import pyfuncol
 
 d = {"a": 1, "b": 2, "c": 3}
@@ -15,9 +17,34 @@ def test_size():
 def test_filter():
     assert d.filter(lambda kv: kv[1] > 1) == {"b": 2, "c": 3}
 
+    # Test that type is preserved
+    di: OrderedDict[str, int] = OrderedDict(d)
+    assert di.filter(lambda kv: True) == di
+
+    dd: DefaultDict[str, int] = defaultdict(int, d)
+    assert dd.filter(lambda kv: True) == dd
+
+
+def test_filter_not():
+    assert d.filter_not(lambda kv: kv[1] > 1) == {"a": 1}
+
+    # Test that type is preserved
+    di: OrderedDict[str, int] = OrderedDict(d)
+    assert di.filter_not(lambda kv: False) == di
+
+    dd: DefaultDict[str, int] = defaultdict(int, d)
+    assert dd.filter_not(lambda kv: False) == dd
+
 
 def test_flat_map():
     assert d.flat_map(lambda kv: {kv[0]: kv[1] ** 2}) == {"a": 1, "b": 4, "c": 9}
+
+    # Test that type is preserved
+    di: OrderedDict[str, int] = OrderedDict(d)
+    assert di.flat_map(lambda kv: {kv[0]: kv[1]}) == di
+
+    dd: DefaultDict[str, int] = defaultdict(int, d)
+    assert dd.flat_map(lambda kv: {kv[0]: kv[1]}) == dd
 
 
 def test_foreach():
@@ -33,6 +60,13 @@ def test_is_empty():
 
 def test_map():
     assert d.map(lambda kv: (kv[0], kv[1] ** 2)) == {"a": 1, "b": 4, "c": 9}
+
+    # Test that type is preserved
+    di: OrderedDict[str, int] = OrderedDict(d)
+    assert di.map(lambda kv: kv) == di
+
+    dd: DefaultDict[str, int] = defaultdict(int, d)
+    assert dd.map(lambda kv: kv) == dd
 
 
 def test_to_list():
@@ -65,7 +99,3 @@ def test_find():
 
 def test_find_none():
     assert d.find(lambda kv: kv[1] == 5) == None
-
-
-def test_filter_not():
-    assert d.filter_not(lambda kv: kv[1] > 1) == {"a": 1}

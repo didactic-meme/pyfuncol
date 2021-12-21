@@ -1,5 +1,6 @@
 from forbiddenfruit import curse
 from typing import Callable, Dict, Optional, Tuple, TypeVar, List
+from copy import deepcopy # needed to preserve subclasses after transformation
 
 A = TypeVar("A")
 B = TypeVar("B")
@@ -41,7 +42,30 @@ def filter(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
     Returns:
         The filtered dict.
     """
-    return {k: v for k, v in self.items() if p((k, v))}
+    res = deepcopy(self)
+    res.clear()
+    for k, v in self.items():
+        if p((k, v)):
+            res[k] = v
+    return res
+
+
+def filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
+    """
+    Selects all elements of this iterable collection which do not satisfy a predicate.
+
+    Args:
+        p: The predicate to not satisfy.
+
+    Returns:
+        The filtered dict.
+    """
+    res = deepcopy(self)
+    res.clear()
+    for k, v in self.items():
+        if not p((k, v)):
+            res[k] = v
+    return res
 
 
 def flat_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Dict[C, D]]) -> Dict[C, D]:
@@ -54,7 +78,8 @@ def flat_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Dict[C, D]]) -> Dict[C
     Returns:
         The new dict.
     """
-    res = {}
+    res = deepcopy(self)
+    res.clear()
     for k, v in self.items():
         d = f((k, v))
         res.update(d)
@@ -91,7 +116,8 @@ def map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]) -> Dict[C, D]
     Returns:
         The new dict.
     """
-    res = {}
+    res = deepcopy(self)
+    res.clear()
     for k, v in self.items():
         k1, v1 = f((k, v))
         res[k1] = v1
@@ -217,19 +243,6 @@ def find(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Optional[Tuple[A
     return None
 
 
-def filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
-    """
-    Selects all elements of this iterable collection which do not satisfy a predicate.
-
-    Args:
-        p: The predicate to satisfy.
-
-    Returns:
-        The filtered dict.
-    """
-    return {k: v for k, v in self.items() if not p((k, v))}
-
-
 def extend_dict():
     """
     Extends the dict built-in type with methods.
@@ -237,6 +250,7 @@ def extend_dict():
     curse(dict, "contains", contains)
     curse(dict, "size", size)
     curse(dict, "filter", filter)
+    curse(dict, "filter_not", filter_not)
     curse(dict, "flat_map", flat_map)
     curse(dict, "foreach", foreach)
     curse(dict, "is_empty", is_empty)
@@ -247,4 +261,3 @@ def extend_dict():
     curse(dict, "fold_right", fold_right)
     curse(dict, "forall", forall)
     curse(dict, "find", find)
-    curse(dict, "filter_not", filter_not)

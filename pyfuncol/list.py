@@ -1,6 +1,7 @@
 from forbiddenfruit import curse
 from collections import defaultdict
 from typing import Callable, Dict, Optional, TypeVar, List
+from copy import deepcopy
 
 A = TypeVar("A")
 B = TypeVar("B")
@@ -18,7 +19,11 @@ def map(self: List[A], f: Callable[[A], B]) -> List[B]:
     Returns:
         The new list.
     """
-    return [f(x) for x in self]
+    res = deepcopy(self)
+    res.clear()
+    for x in self:
+        res.append(f(x))
+    return res
 
 
 def filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
@@ -31,7 +36,30 @@ def filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
     Returns:
         The filtered list.
     """
-    return [x for x in self if p(x)]
+    res = deepcopy(self)
+    res.clear()
+    for x in self:
+        if p(x):
+            res.append(x)
+    return res
+
+
+def filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
+    """
+    Selects all elements of this list which do not satisfy a predicate.
+
+    Args:
+        p: The predicate to not satisfy.
+
+    Returns:
+        The filtered list.
+    """
+    res = deepcopy(self)
+    res.clear()
+    for x in self:
+        if not p(x):
+            res.append(x)
+    return res
 
 
 def flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
@@ -44,7 +72,11 @@ def flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
     Returns:
         The new list.
     """
-    return [y for x in self for y in f(x)]
+    res = deepcopy(self)
+    res.clear()
+    for x in self:
+        res.extend(f(x))
+    return res
 
 
 def flatten(self: List[A]) -> List[B]:
@@ -54,7 +86,11 @@ def flatten(self: List[A]) -> List[B]:
     Returns:
         The flattened list.
     """
-    return [y for x in self for y in x]
+    res = deepcopy(self)
+    res.clear()
+    for x in self:
+        res.extend(x)
+    return res
 
 
 def contains(self: List[A], elem: A) -> bool:
@@ -77,7 +113,11 @@ def distinct(self: List[A]) -> List[A]:
     Returns:
         The list without duplicates.
     """
-    return list(set(self))
+    res = deepcopy(self)
+    res.clear()
+    no_duplicates = list(set(self))
+    res.extend(no_duplicates)
+    return res
 
 
 def foreach(self: List[A], f: Callable[[A], U]) -> None:
@@ -104,7 +144,7 @@ def group_by(self: List[A], f: Callable[[A], K]) -> Dict[K, List[A]]:
     for x in self:
         k = f(x)
         d[k].append(x)
-    return d
+    return dict(d)
 
 
 def is_empty(self: List[A]) -> bool:
@@ -253,7 +293,9 @@ def take(self: List[A], n: int) -> List[A]:
     """
 
     if n < 0:
-        return []
+        l = deepcopy(self)
+        l.clear()
+        return l
     if len(self) <= n:
         return self
 
@@ -276,6 +318,7 @@ def extend_list():
     """
     curse(list, "map", map)
     curse(list, "filter", filter)
+    curse(list, "filter_not", filter_not)
     curse(list, "flat_map", flat_map)
     curse(list, "flatten", flatten)
     curse(list, "contains", contains)
