@@ -18,7 +18,7 @@ def map(self: Set[A], f: Callable[[A], B]) -> Set[B]:
     Returns:
         The new set.
     """
-    return {f(x) for x in self}
+    return type(self)({f(x) for x in self})
 
 
 def filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
@@ -31,7 +31,20 @@ def filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
     Returns:
         The filtered set.
     """
-    return {x for x in self if p(x)}
+    return type(self)({x for x in self if p(x)})
+
+
+def filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
+    """
+    Selects all elements of this set which do not satisfy a predicate.
+
+    Args:
+        p: The predicate to not satisfy.
+
+    Returns:
+        The filtered set.
+    """
+    return type(self)({x for x in self if not p(x)})
 
 
 def flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
@@ -44,7 +57,7 @@ def flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
     Returns:
         The new set.
     """
-    return {y for x in self for y in f(x)}
+    return type(self)({y for x in self for y in f(x)})
 
 
 def contains(self: Set[A], elem: A) -> bool:
@@ -195,10 +208,11 @@ def length(self: Set[A]) -> int:
 
 def extend_set():
     """
-    Extends the set built-in type with methods.
+    Extends the set and frozenset built-in type with methods.
     """
     curse(set, "map", map)
     curse(set, "filter", filter)
+    curse(set, "filter_not", filter_not)
     curse(set, "flat_map", flat_map)
     curse(set, "contains", contains)
     curse(set, "foreach", foreach)
@@ -210,3 +224,18 @@ def extend_set():
     curse(set, "fold_right", fold_right)
     curse(set, "forall", forall)
     curse(set, "length", length)
+
+    curse(frozenset, "map", map)
+    curse(frozenset, "filter", filter)
+    curse(frozenset, "filter_not", filter_not)
+    curse(frozenset, "flat_map", flat_map)
+    curse(frozenset, "contains", contains)
+    curse(frozenset, "foreach", foreach)
+    curse(frozenset, "group_by", group_by)
+    curse(frozenset, "is_empty", is_empty)
+    curse(frozenset, "size", size)
+    curse(frozenset, "find", find)
+    curse(frozenset, "fold_left", fold_left)
+    curse(frozenset, "fold_right", fold_right)
+    curse(frozenset, "forall", forall)
+    curse(frozenset, "length", length)
