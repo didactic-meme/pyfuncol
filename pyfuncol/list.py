@@ -1,7 +1,7 @@
 from forbiddenfruit import curse
 from collections import defaultdict
 from typing import Callable, Dict, Optional, TypeVar, List
-from copy import deepcopy
+from copy import deepcopy # needed to preserve subclasses after transformation
 
 A = TypeVar("A")
 B = TypeVar("B")
