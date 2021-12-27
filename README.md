@@ -3,6 +3,7 @@
 ![CI](https://github.com/Gondolav/pyfuncol/actions/workflows/python-app.yml/badge.svg)
 [![codecov](https://codecov.io/gh/Gondolav/pyfuncol/branch/main/graph/badge.svg)](https://codecov.io/gh/Gondolav/pyfuncol)
 ![PyPI](https://img.shields.io/pypi/v/pyfuncol?color=blue)
+[![Downloads](https://pepy.tech/badge/pyfuncol/month)](https://pepy.tech/project/pyfuncol)
 [![Documentation Status](https://readthedocs.org/projects/pyfuncol/badge/?version=latest)](https://pyfuncol.readthedocs.io/en/latest/?badge=latest)
 [![GitHub license](https://img.shields.io/github/license/Gondolav/pyfuncol)](https://github.com/Gondolav/pyfuncol/blob/main/LICENSE)
 
@@ -31,13 +32,27 @@ import pyfuncol
 [1, 2, 3, 4].map(lambda x: x * 2).filter(lambda x: x > 4)
 # [6, 8]
 
-{1, 2, 3, 4}.map(lambda x: x * 2).filter(lambda x: x > 4)
+[1, 2, 3, 4].fold_left(0, lambda acc, n: acc + n)
+# 10
+
+{1, 2, 3, 4}.map(lambda x: x * 2).filter_not(lambda x: x <= 4)
 # {6, 8}
 
 ["abc", "def", "e"].group_by(lambda s: len(s))
 # {3: ["abc", "def"], 1: ["e"]}
 
 {"a": 1, "b": 2, "c": 3}.flat_map(lambda kv: {kv[0]: kv[1] ** 2})
+# {"a": 1, "b": 4, "c": 9}
+
+# pyfuncol also provides some parallel operations
+
+[1, 2, 3, 4].par_map(lambda x: x * 2).par_filter(lambda x: x > 4)
+# [6, 8]
+
+{1, 2, 3, 4}.par_map(lambda x: x * 2).par_filter(lambda x: x > 4)
+# {6, 8}
+
+{"a": 1, "b": 2, "c": 3}.par_flat_map(lambda kv: {kv[0]: kv[1] ** 2})
 # {"a": 1, "b": 4, "c": 9}
 ```
 
