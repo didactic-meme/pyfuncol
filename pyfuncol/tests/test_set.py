@@ -1,5 +1,4 @@
 import pyfuncol
-import pytest
 
 s = {1, 2, 3}
 
@@ -89,3 +88,22 @@ def test_length():
 
 def test_length_equal_size():
     assert s.size() == s.length()
+
+
+# Parallel operations
+
+
+def test_par_map():
+    assert s.par_map(lambda x: x * 2) == {2, 4, 6}
+
+
+def test_par_filter():
+    assert s.par_filter(lambda x: x >= 2) == {2, 3}
+
+
+def test_par_filter_not():
+    assert s.par_filter_not(lambda x: x < 2) == {2, 3}
+
+
+def test_par_flat_map():
+    assert s.par_flat_map(lambda x: [x ** 2]) == {1, 4, 9}

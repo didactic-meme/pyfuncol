@@ -1,6 +1,7 @@
 from forbiddenfruit import curse
 from collections import defaultdict
 from typing import Callable, Dict, Optional, TypeVar, List
+import dask
 
 A = TypeVar("A")
 B = TypeVar("B")
@@ -270,6 +271,65 @@ def length(self: List[A]) -> int:
     return len(self)
 
 
+# Parallel operations
+
+
+def par_map(self: List[A], f: Callable[[A], B]) -> List[B]:
+    """
+    Builds a new list by applying a function in parallel to all elements of this list.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new list.
+    """
+    return list(dask.compute(*(dask.delayed(f)(x) for x in self)))
+
+
+def par_filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
+    """
+    Selects in parallel all elements of this list which satisfy a predicate.
+
+    Args:
+        p: The predicate to satisfy.
+
+    Returns:
+        The filtered list.
+    """
+    preds = dask.compute(*(dask.delayed(p)(x) for x in self))
+    return [x for i, x in enumerate(self) if preds[i]]
+
+
+def par_filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
+    """
+    Selects in parallel all elements of this list which do not satisfy a predicate.
+
+    Args:
+        p: The predicate to not satisfy.
+
+    Returns:
+        The filtered list.
+    """
+    preds = dask.compute(*(dask.delayed(p)(x) for x in self))
+    return [x for i, x in enumerate(self) if not preds[i]]
+
+
+def par_flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
+    """
+    Builds a new list by applying a function in parallel to all elements of this list and using the
+    elements of the resulting collections.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new list.
+    """
+    applications = dask.compute(*(dask.delayed(f)(x) for x in self))
+    return [z for y in applications for z in y]
+
+
 def extend_list():
     """
     Extends the list built-in type with methods.
@@ -293,3 +353,9 @@ def extend_list():
     curse(list, "tail", tail)
     curse(list, "take", take)
     curse(list, "length", length)
+
+    # Parallel operations
+    curse(list, "par_map", par_map)
+    curse(list, "par_filter", par_filter)
+    curse(list, "par_filter_not", par_filter_not)
+    curse(list, "par_flat_map", par_flat_map)

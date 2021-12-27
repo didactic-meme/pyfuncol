@@ -1,1 +1,2 @@
+dask==2021.12.0
 forbiddenfruit==0.1.4
