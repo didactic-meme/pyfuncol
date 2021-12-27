@@ -284,7 +284,7 @@ def par_map(self: List[A], f: Callable[[A], B]) -> List[B]:
     Returns:
         The new list.
     """
-    return list(dask.compute(*[dask.delayed(f)(x) for x in self]))
+    return list(dask.compute(*(dask.delayed(f)(x) for x in self)))
 
 
 def par_filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
@@ -297,7 +297,7 @@ def par_filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
     Returns:
         The filtered list.
     """
-    preds = list(dask.compute(*[dask.delayed(p)(x) for x in self]))
+    preds = dask.compute(*(dask.delayed(p)(x) for x in self))
     return [x for i, x in enumerate(self) if preds[i]]
 
 
@@ -311,7 +311,7 @@ def par_filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
     Returns:
         The filtered list.
     """
-    preds = list(dask.compute(*[dask.delayed(p)(x) for x in self]))
+    preds = dask.compute(*(dask.delayed(p)(x) for x in self))
     return [x for i, x in enumerate(self) if not preds[i]]
 
 
@@ -326,7 +326,7 @@ def par_flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
     Returns:
         The new list.
     """
-    applications = list(dask.compute(*[dask.delayed(f)(x) for x in self]))
+    applications = dask.compute(*(dask.delayed(f)(x) for x in self))
     return [z for y in applications for z in y]
 
 

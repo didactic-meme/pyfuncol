@@ -1,6 +1,7 @@
 from forbiddenfruit import curse
 from collections import defaultdict
 from typing import Callable, Dict, Optional, TypeVar, Set
+import dask
 
 A = TypeVar("A")
 B = TypeVar("B")
@@ -193,6 +194,64 @@ def length(self: Set[A]) -> int:
     return len(self)
 
 
+# Parallel operations
+
+
+def par_map(self: Set[A], f: Callable[[A], B]) -> Set[B]:
+    """
+    Builds a new set by applying in parallel a function to all elements of this set.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new set.
+    """
+    return set(dask.compute(*(dask.delayed(f)(x) for x in self)))
+
+
+def par_filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
+    """
+    Selects in parallel all elements of this set which satisfy a predicate.
+
+    Args:
+        p: The predicate to satisfy.
+
+    Returns:
+        The filtered set.
+    """
+    preds = dask.compute(*(dask.delayed(p)(x) for x in self))
+    return {x for i, x in enumerate(self) if preds[i]}
+
+
+def par_filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
+    """
+    Selects in parallel all elements of this set which do not satisfy a predicate.
+
+    Args:
+        p: The predicate to not satisfy.
+
+    Returns:
+        The filtered set.
+    """
+    preds = dask.compute(*(dask.delayed(p)(x) for x in self))
+    return {x for i, x in enumerate(self) if not preds[i]}
+
+
+def par_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
+    """
+    Builds a new set by applying in parallel a function to all elements of this set and using the elements of the resulting collections.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new set.
+    """
+    applications = dask.compute(*(dask.delayed(f)(x) for x in self))
+    return {x for y in applications for x in y}
+
+
 def extend_set():
     """
     Extends the set built-in type with methods.
@@ -210,3 +269,9 @@ def extend_set():
     curse(set, "fold_right", fold_right)
     curse(set, "forall", forall)
     curse(set, "length", length)
+
+    # Parallel operations
+    curse(set, "par_map", par_map)
+    curse(set, "par_filter", par_filter)
+    curse(set, "par_filter_not", par_filter_not)
+    curse(set, "par_flat_map", par_flat_map)

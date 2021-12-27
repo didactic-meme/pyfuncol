@@ -69,3 +69,22 @@ def test_find_none():
 
 def test_filter_not():
     assert d.filter_not(lambda kv: kv[1] > 1) == {"a": 1}
+
+
+# Parallel operations
+
+
+def test_par_filter():
+    assert d.par_filter(lambda kv: kv[1] > 1) == {"b": 2, "c": 3}
+
+
+def test_par_filter_not():
+    assert d.par_filter_not(lambda kv: kv[1] <= 1) == {"b": 2, "c": 3}
+
+
+def test_par_flat_map():
+    assert d.par_flat_map(lambda kv: {kv[0]: kv[1] ** 2}) == {"a": 1, "b": 4, "c": 9}
+
+
+def test_par_map():
+    assert d.par_map(lambda kv: (kv[0], kv[1] ** 2)) == {"a": 1, "b": 4, "c": 9}
