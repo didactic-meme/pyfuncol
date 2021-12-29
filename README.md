@@ -3,7 +3,7 @@
 ![CI](https://github.com/Gondolav/pyfuncol/actions/workflows/python-app.yml/badge.svg)
 [![codecov](https://codecov.io/gh/Gondolav/pyfuncol/branch/main/graph/badge.svg)](https://codecov.io/gh/Gondolav/pyfuncol)
 ![PyPI](https://img.shields.io/pypi/v/pyfuncol?color=blue)
-[![Downloads](https://pepy.tech/badge/pyfuncol/month)](https://pepy.tech/project/pyfuncol)
+[![Downloads](https://pepy.tech/badge/pyfuncol)](https://pepy.tech/project/pyfuncol)
 [![Documentation Status](https://readthedocs.org/projects/pyfuncol/badge/?version=latest)](https://pyfuncol.readthedocs.io/en/latest/?badge=latest)
 [![GitHub license](https://img.shields.io/github/license/Gondolav/pyfuncol)](https://github.com/Gondolav/pyfuncol/blob/main/LICENSE)
 
