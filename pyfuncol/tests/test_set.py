@@ -19,10 +19,6 @@ def test_filter_not():
     assert st.filter_not(lambda x: x < 2) == frozenset({2, 3})
 
 
-def test_filter_not():
-    assert s.filter_not(lambda x: x >= 2) == {1}
-
-
 def test_flat_map():
     assert s.flat_map(lambda x: {x ** 2}) == {1, 4, 9}
     assert st.flat_map(lambda x: {x ** 2}) == frozenset({1, 4, 9})

@@ -31,10 +31,6 @@ def test_filter_not():
     assert lst.filter_not(lambda x: False) == lst
 
 
-def test_filter_not():
-    assert l.filter_not(lambda x: x >= 2) == [1]
-
-
 def test_flat_map():
     assert l.flat_map(lambda x: [x ** 2]) == [1, 4, 9]
 
@@ -238,4 +234,4 @@ def test_pure_filter_not():
     assert l.pure_filter_not(lambda x: x >= 2) == [1]
 
     # Test that type is preserved
-    assert l.pure_filter_not(lambda x: x >= 2) == [1]
+    assert lst.pure_filter_not(lambda x: x >= 2) == [1]

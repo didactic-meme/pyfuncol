@@ -49,19 +49,6 @@ def filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
     return type(self)(x for x in self if not p(x))
 
 
-def filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
-    """
-    Selects all elements of this list which do not satisfy a predicate.
-
-    Args:
-        p: The predicate not to satisfy.
-
-    Returns:
-        The filtered list.
-    """
-    return [x for x in self if not p(x)]
-
-
 def flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
     """
     Builds a new list by applying a function to all elements of this list and using the elements of the resulting collections.

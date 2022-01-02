@@ -30,10 +30,6 @@ def test_filter_not():
     assert di.filter_not(lambda kv: False) == di
 
 
-def test_filter_not():
-    assert d.filter_not(lambda kv: kv[1] > 1) == {"a": 1}
-
-
 def test_flat_map():
     assert d.flat_map(lambda kv: {kv[0]: kv[1] ** 2}) == {"a": 1, "b": 4, "c": 9}
 

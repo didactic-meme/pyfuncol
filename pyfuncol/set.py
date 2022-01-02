@@ -49,19 +49,6 @@ def filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
     return type(self)(x for x in self if not p(x))
 
 
-def filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
-    """
-    Selects all elements of this set which do not satisfy a predicate.
-
-    Args:
-        p: The predicate not to satisfy.
-
-    Returns:
-        The filtered set.
-    """
-    return {x for x in self if not p(x)}
-
-
 def flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
     """
     Builds a new set by applying a function to all elements of this set and using the elements of the resulting collections.
