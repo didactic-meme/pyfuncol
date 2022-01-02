@@ -35,6 +35,17 @@ def filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
     """
     return [x for x in self if p(x)]
 
+def filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
+    """
+    Selects all elements of this list which do not satisfy a predicate.
+
+    Args:
+        p: The predicate not to satisfy.
+
+    Returns:
+        The filtered list.
+    """
+    return [x for x in self if not p(x)]
 
 def flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
     """
@@ -345,16 +356,13 @@ def pure_map(self: List[A], f: Callable[[A], B]) -> List[B]:
     Returns:
         The new list.
     """
-    res = []
     f_cache = functools.cache(f)
-    for x in self:
-        res.append(f_cache(x))
-    return res
+    return [f_cache(x) for x in self]
 
 
 def pure_flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
     """
-    Builds a new list by applying a function to all elements of this list and using the elements of the resulting collections using memoization to improve performance..
+    Builds a new list by applying a function to all elements of this list and using the elements of the resulting collections using memoization to improve performance.
 
     WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
 
@@ -366,13 +374,44 @@ def pure_flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
     Returns:
         The new list.
     """
-    res = []
     f_cache = functools.cache(f)
-    for x in self:
-        for y in f_cache(x):
-            res.append(y)
-    return res
+    return [y for x in self for y in f_cache(x)]
 
+
+def pure_filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
+    """
+    Selects all elements of this list which satisfy a predicate using memoization to improve performance.
+
+    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
+
+    Type A must be hashable using `hash()` function.
+
+    Args:
+        p: The predicate to satisfy.
+
+    Returns:
+        The filtered list.
+    """
+    p_cache = functools.cache(p)
+    return [x for x in self if p_cache(x)]
+
+def pure_filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
+    """
+    Selects all elements of this list which do not satisfy a predicate using memoization to improve performance.
+
+    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
+
+    Type A must be hashable using `hash()` function.
+
+
+    Args:
+        p: The predicate not to satisfy.
+
+    Returns:
+        The filtered list.
+    """
+    p_cache = functools.cache(p)
+    return [x for x in self if not p_cache(x)]
 
 def extend_list():
     """
@@ -380,6 +419,7 @@ def extend_list():
     """
     curse(list, "map", map)
     curse(list, "filter", filter)
+    curse(list, "filter_not", filter_not)
     curse(list, "flat_map", flat_map)
     curse(list, "flatten", flatten)
     curse(list, "contains", contains)
@@ -407,3 +447,5 @@ def extend_list():
     # Pure operations
     curse(list, "pure_map", pure_map)
     curse(list, "pure_flat_map", pure_flat_map)
+    curse(list, "pure_filter", pure_filter)
+    curse(list, "pure_filter_not", pure_filter_not)

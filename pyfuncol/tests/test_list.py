@@ -11,6 +11,8 @@ def test_map():
 def test_filter():
     assert l.filter(lambda x: x >= 2) == [2, 3]
 
+def test_filter_not():
+    assert l.filter_not(lambda x: x >= 2) == [1]
 
 def test_flat_map():
     assert l.flat_map(lambda x: [x ** 2]) == [1, 4, 9]
@@ -164,3 +166,9 @@ def test_pure_map():
 
 def test_pure_flat_map():
     assert l.pure_flat_map(lambda x: [x ** 2]) == [1, 4, 9]
+
+def test_pure_filter():
+    assert l.pure_filter(lambda x: x >= 2) == [2, 3]
+
+def test_pure_filter_not():
+    assert l.pure_filter_not(lambda x: x >= 2) == [1]
