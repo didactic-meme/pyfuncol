@@ -330,6 +330,56 @@ def par_flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
     return [z for y in applications for z in y]
 
 
+def pure_map(self: List[A], f: Callable[[A], B]) -> List[B]:
+    """
+    Builds a new list by applying a function to all elements of this list using memoization to improve performance.
+
+    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
+
+    type A must be hashable using `hash()` function.
+
+    Args:
+        f: The PURE function to apply to all elements.
+
+    Returns:
+        The new list.
+    """
+    res = []
+    memoized_results: Dict[int, B] = {}
+    for x in self:
+        h = hash(x)
+        if not h in memoized_results:
+            v = f(x)
+            memoized_results[h] = v
+        res.append(memoized_results[h])
+    return res
+
+def pure_flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
+    """
+    Builds a new list by applying a function to all elements of this list and using the elements of the resulting collections using memoization to improve performance..
+
+    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
+
+    type A must be hashable using `hash()` function.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new list.
+    """
+    res = []
+    memoized_results: Dict[int, List[B]] = {}
+    for x in self:
+        h = hash(x)
+        if not h in memoized_results:
+            v = f(x)
+            memoized_results[h] = v
+        for y in memoized_results[h]:
+            res.append(y)
+    return res
+
+
 def extend_list():
     """
     Extends the list built-in type with methods.
@@ -359,3 +409,7 @@ def extend_list():
     curse(list, "par_filter", par_filter)
     curse(list, "par_filter_not", par_filter_not)
     curse(list, "par_flat_map", par_flat_map)
+
+    # Pure operations
+    curse(list, "pure_map", pure_map)
+    curse(list, "pure_flat_map", pure_flat_map)

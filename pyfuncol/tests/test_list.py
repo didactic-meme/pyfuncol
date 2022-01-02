@@ -7,7 +7,6 @@ l = [1, 2, 3]
 def test_map():
     assert l.map(lambda x: x * 2) == [2, 4, 6]
 
-
 def test_filter():
     assert l.filter(lambda x: x >= 2) == [2, 3]
 
@@ -153,3 +152,12 @@ def test_par_filter_not():
 
 def test_par_flat_map():
     assert l.par_flat_map(lambda x: [x ** 2]) == [1, 4, 9]
+
+
+# Pure operations
+
+def test_pure_map():
+    assert l.pure_map(lambda x: x * 2) == [2, 4, 6]
+
+def test_pure_flat_map():
+    assert l.pure_flat_map(lambda x: [x ** 2]) == [1, 4, 9]
