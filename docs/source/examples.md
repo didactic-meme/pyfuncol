@@ -21,7 +21,7 @@ import pyfuncol
 # {"a": 1, "b": 4, "c": 9}
 ```
 
-pyfuncol also provides parallel operations (for now `par_map`, `par_flat_map`, `par_filter` and `par_filter_not`):
+pyfuncol provides parallel operations (for now `par_map`, `par_flat_map`, `par_filter` and `par_filter_not`):
 
 ```python
 [1, 2, 3, 4].par_map(lambda x: x * 2).par_filter(lambda x: x > 4)
