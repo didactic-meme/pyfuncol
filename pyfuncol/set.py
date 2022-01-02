@@ -32,7 +32,7 @@ def filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
     Returns:
         The filtered set.
     """
-    return type(self)({x for x in self if p(x)})
+    return type(self)(x for x in self if p(x))
 
 
 def filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
@@ -45,7 +45,7 @@ def filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
     Returns:
         The filtered set.
     """
-    return type(self)({x for x in self if not p(x)})
+    return type(self)(x for x in self if not p(x))
 
 
 def flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
