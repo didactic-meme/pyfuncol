@@ -38,10 +38,10 @@ pyfuncol provides operations leveraging memoization to improve performance (for 
 for **pure** functions (i.e., all calls to the same args return the same value) on hashable inputs
 
 ```python
-[1, 2, 3, 4].pure_map(lambda x: x * 2).filter(lambda x: x > 4)
+[1, 2, 3, 4].pure_map(lambda x: x * 2).pure_filter(lambda x: x > 4)
 # [6, 8]
 
-{1, 2, 3, 4}.pure_map(lambda x: x * 2).filter_not(lambda x: x <= 4)
+{1, 2, 3, 4}.pure_map(lambda x: x * 2).pure_filter_not(lambda x: x <= 4)
 # {6, 8}
 
 {"a": 1, "b": 2, "c": 3}.pure_flat_map(lambda kv: {kv[0]: kv[1] ** 2})
