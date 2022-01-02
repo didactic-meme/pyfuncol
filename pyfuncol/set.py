@@ -1,6 +1,7 @@
 from forbiddenfruit import curse
 from collections import defaultdict
 from typing import Callable, Dict, Optional, TypeVar, Set
+import functools
 import dask
 
 A = TypeVar("A")
@@ -252,6 +253,51 @@ def par_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
     return {x for y in applications for x in y}
 
 
+# Pure operations
+
+def pure_map(self: Set[A], f: Callable[[A], B]) -> Set[B]:
+    """
+    Builds a new set by applying a function to all elements of this set using memoization to improve performance.
+
+    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
+
+    type A must be hashable using `hash()` function.
+
+    Args:
+        f: The PURE function to apply to all elements.
+
+    Returns:
+        The new set.
+    """
+    res = set()
+    f_cache = functools.cache(f)
+    for x in self:
+        res.add(f_cache(x))
+    return res
+
+def pure_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
+    """
+    Builds a new set by applying a function to all elements of this set and using the elements of the resulting collections using memoization to improve performance..
+
+    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
+
+    type A must be hashable using `hash()` function.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new set.
+    """
+    res = set()
+    f_cache = functools.cache(f)
+    for x in self:
+        for y in f_cache(x):
+            res.add(y)
+    return res
+
+
+
 def extend_set():
     """
     Extends the set built-in type with methods.
@@ -275,3 +321,7 @@ def extend_set():
     curse(set, "par_filter", par_filter)
     curse(set, "par_filter_not", par_filter_not)
     curse(set, "par_flat_map", par_flat_map)
+
+    # Pure operations
+    curse(set, "pure_map", par_map)
+    curse(set, "pure_flat_map", par_flat_map)

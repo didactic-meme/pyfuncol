@@ -107,3 +107,13 @@ def test_par_filter_not():
 
 def test_par_flat_map():
     assert s.par_flat_map(lambda x: [x ** 2]) == {1, 4, 9}
+
+# Pure operations
+
+
+def test_pure_map():
+    assert s.pure_map(lambda x: x * 2) == {2, 4, 6}
+
+
+def test_Pure_flat_map():
+    assert s.pure_flat_map(lambda x: [x ** 2]) == {1, 4, 9}
