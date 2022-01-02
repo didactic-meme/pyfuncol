@@ -178,3 +178,38 @@ def test_length():
 
 def test_length_equal_size():
     assert l.size() == l.length()
+
+
+# Parallel operations
+
+
+def test_par_map():
+    assert l.par_map(lambda x: x * 2) == [2, 4, 6]
+
+    # Test that type is preserved
+    lst = Lst(l)
+    assert lst.par_map(lambda x: x) == lst
+
+
+def test_par_filter():
+    assert l.par_filter(lambda x: x >= 2) == [2, 3]
+
+    # Test that type is preserved
+    lst = Lst(l)
+    assert lst.par_filter(lambda x: True) == lst
+
+
+def test_par_filter_not():
+    assert l.par_filter_not(lambda x: x < 2) == [2, 3]
+
+    # Test that type is preserved
+    lst = Lst(l)
+    assert lst.par_filter_not(lambda x: False) == lst
+
+
+def test_par_flat_map():
+    assert l.par_flat_map(lambda x: [x ** 2]) == [1, 4, 9]
+
+    # Test that type is preserved
+    lst = Lst(l)
+    assert lst.par_flat_map(lambda x: [x]) == lst

@@ -1,7 +1,7 @@
 from forbiddenfruit import curse
 from collections import defaultdict
-from typing import Callable, Dict, Optional, TypeVar, List
-from copy import deepcopy # needed to preserve subclasses after transformation
+from typing import Callable, Dict, Optional, TypeVar, List, cast
+import dask
 
 A = TypeVar("A")
 B = TypeVar("B")
@@ -19,11 +19,7 @@ def map(self: List[A], f: Callable[[A], B]) -> List[B]:
     Returns:
         The new list.
     """
-    res = deepcopy(self)
-    res.clear()
-    for x in self:
-        res.append(f(x))
-    return res
+    return cast(List[B], type(self)([f(x) for x in self]))
 
 
 def filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
@@ -36,12 +32,7 @@ def filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
     Returns:
         The filtered list.
     """
-    res = deepcopy(self)
-    res.clear()
-    for x in self:
-        if p(x):
-            res.append(x)
-    return res
+    return type(self)([x for x in self if p(x)])
 
 
 def filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
@@ -54,12 +45,7 @@ def filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
     Returns:
         The filtered list.
     """
-    res = deepcopy(self)
-    res.clear()
-    for x in self:
-        if not p(x):
-            res.append(x)
-    return res
+    return type(self)([x for x in self if not p(x)])
 
 
 def flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
@@ -72,11 +58,7 @@ def flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
     Returns:
         The new list.
     """
-    res = deepcopy(self)
-    res.clear()
-    for x in self:
-        res.extend(f(x))
-    return res
+    return cast(List[B], type(self)([y for x in self for y in f(x)]))
 
 
 def flatten(self: List[A]) -> List[B]:
@@ -86,11 +68,7 @@ def flatten(self: List[A]) -> List[B]:
     Returns:
         The flattened list.
     """
-    res = deepcopy(self)
-    res.clear()
-    for x in self:
-        res.extend(x)
-    return res
+    return cast(List[B], [y for x in self for y in x])
 
 
 def contains(self: List[A], elem: A) -> bool:
@@ -113,11 +91,7 @@ def distinct(self: List[A]) -> List[A]:
     Returns:
         The list without duplicates.
     """
-    res = deepcopy(self)
-    res.clear()
-    no_duplicates = list(set(self))
-    res.extend(no_duplicates)
-    return res
+    return type(self)((set(self)))
 
 
 def foreach(self: List[A], f: Callable[[A], U]) -> None:
@@ -127,7 +101,8 @@ def foreach(self: List[A], f: Callable[[A], U]) -> None:
     Args:
         f: The function to apply to all elements for its side effects.
     """
-    [f(x) for x in self]
+    for x in self:
+        f(x)
 
 
 def group_by(self: List[A], f: Callable[[A], K]) -> Dict[K, List[A]]:
@@ -140,7 +115,7 @@ def group_by(self: List[A], f: Callable[[A], K]) -> Dict[K, List[A]]:
     Returns:
         A dictionary where elements are grouped according to the grouping function.
     """
-    d = defaultdict(list)
+    d = defaultdict(type(self))
     for x in self:
         k = f(x)
         d[k].append(x)
@@ -293,9 +268,7 @@ def take(self: List[A], n: int) -> List[A]:
     """
 
     if n < 0:
-        l = deepcopy(self)
-        l.clear()
-        return l
+        return type(self)()
     if len(self) <= n:
         return self
 
@@ -310,6 +283,67 @@ def length(self: List[A]) -> int:
         The length of the list
     """
     return len(self)
+
+
+# Parallel operations
+
+
+def par_map(self: List[A], f: Callable[[A], B]) -> List[B]:
+    """
+    Builds a new list by applying a function in parallel to all elements of this list.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new list.
+    """
+    return cast(
+        List[B], type(self)((dask.compute(*(dask.delayed(f)(x) for x in self))))
+    )
+
+
+def par_filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
+    """
+    Selects in parallel all elements of this list which satisfy a predicate.
+
+    Args:
+        p: The predicate to satisfy.
+
+    Returns:
+        The filtered list.
+    """
+    preds = dask.compute(*(dask.delayed(p)(x) for x in self))
+    return type(self)(x for i, x in enumerate(self) if preds[i])
+
+
+def par_filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
+    """
+    Selects in parallel all elements of this list which do not satisfy a predicate.
+
+    Args:
+        p: The predicate to not satisfy.
+
+    Returns:
+        The filtered list.
+    """
+    preds = dask.compute(*(dask.delayed(p)(x) for x in self))
+    return type(self)(x for i, x in enumerate(self) if not preds[i])
+
+
+def par_flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
+    """
+    Builds a new list by applying a function in parallel to all elements of this list and using the
+    elements of the resulting collections.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new list.
+    """
+    applications = dask.compute(*(dask.delayed(f)(x) for x in self))
+    return cast(List[B], type(self)(z for y in applications for z in y))
 
 
 def extend_list():
@@ -336,3 +370,9 @@ def extend_list():
     curse(list, "tail", tail)
     curse(list, "take", take)
     curse(list, "length", length)
+
+    # Parallel operations
+    curse(list, "par_map", par_map)
+    curse(list, "par_filter", par_filter)
+    curse(list, "par_filter_not", par_filter_not)
+    curse(list, "par_flat_map", par_flat_map)

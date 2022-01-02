@@ -1,6 +1,6 @@
 from forbiddenfruit import curse
-from typing import Callable, Dict, Optional, Tuple, TypeVar, List
-from copy import deepcopy # needed to preserve subclasses after transformation
+from typing import Callable, Dict, Optional, Tuple, TypeVar, List, cast
+import dask
 
 A = TypeVar("A")
 B = TypeVar("B")
@@ -42,12 +42,7 @@ def filter(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
     Returns:
         The filtered dict.
     """
-    res = deepcopy(self)
-    res.clear()
-    for k, v in self.items():
-        if p((k, v)):
-            res[k] = v
-    return res
+    return type(self)({k: v for k, v in self.items() if p((k, v))})
 
 
 def filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
@@ -60,12 +55,7 @@ def filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]
     Returns:
         The filtered dict.
     """
-    res = deepcopy(self)
-    res.clear()
-    for k, v in self.items():
-        if not p((k, v)):
-            res[k] = v
-    return res
+    return type(self)({k: v for k, v in self.items() if not p((k, v))})
 
 
 def flat_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Dict[C, D]]) -> Dict[C, D]:
@@ -78,8 +68,7 @@ def flat_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Dict[C, D]]) -> Dict[C
     Returns:
         The new dict.
     """
-    res = deepcopy(self)
-    res.clear()
+    res = cast(Dict[C, D], type(self)())
     for k, v in self.items():
         d = f((k, v))
         res.update(d)
@@ -93,7 +82,8 @@ def foreach(self: Dict[A, B], f: Callable[[Tuple[A, B]], U]) -> None:
     Args:
         f: The function to apply to all elements for its side effects.
     """
-    [f((k, v)) for k, v in self.items()]
+    for k, v in self.items():
+        f((k, v))
 
 
 def is_empty(self: Dict[A, B]) -> bool:
@@ -116,12 +106,7 @@ def map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]) -> Dict[C, D]
     Returns:
         The new dict.
     """
-    res = deepcopy(self)
-    res.clear()
-    for k, v in self.items():
-        k1, v1 = f((k, v))
-        res[k1] = v1
-    return res
+    return cast(Dict[C, D], type(self)(f(x) for x in self.items()))
 
 
 def to_list(self: Dict[A, B]) -> List[Tuple[A, B]]:
@@ -243,6 +228,71 @@ def find(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Optional[Tuple[A
     return None
 
 
+# Parallel operations
+
+
+def par_filter(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
+    """
+    Selects in parallel all elements of this dict which satisfy a predicate.
+
+    Args:
+        p: The predicate to satisfy.
+
+    Returns:
+        The filtered dict.
+    """
+    preds = dask.compute(*(dask.delayed(p)(x) for x in self.items()))
+    return type(self)({k: v for i, (k, v) in enumerate(self.items()) if preds[i]})
+
+
+def par_filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
+    """
+    Selects in parallel all elements of this dict which do not satisfy a predicate.
+
+    Args:
+        p: The predicate to not satisfy.
+
+    Returns:
+        The filtered dict.
+    """
+    preds = dask.compute(*(dask.delayed(p)(x) for x in self.items()))
+    return type(self)({k: v for i, (k, v) in enumerate(self.items()) if not preds[i]})
+
+
+def par_flat_map(
+    self: Dict[A, B], f: Callable[[Tuple[A, B]], Dict[C, D]]
+) -> Dict[C, D]:
+    """
+    Builds a new dict by applying a function in parallel to all elements of this dict and using the elements of the resulting collections.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new dict.
+    """
+    applications = dask.compute(*(dask.delayed(f)(x) for x in self.items()))
+    return cast(
+        Dict[C, D], type(self)({k: v for y in applications for k, v in y.items()})
+    )
+
+
+def par_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]) -> Dict[C, D]:
+    """
+    Builds a new dict by applying a function in parallel to all elements of this dict.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new dict.
+    """
+    return cast(
+        Dict[C, D],
+        type(self)((dask.compute(*(dask.delayed(f)(x) for x in self.items())))),
+    )
+
+
 def extend_dict():
     """
     Extends the dict built-in type with methods.
@@ -261,3 +311,9 @@ def extend_dict():
     curse(dict, "fold_right", fold_right)
     curse(dict, "forall", forall)
     curse(dict, "find", find)
+
+    # Parallel operations
+    curse(dict, "par_map", par_map)
+    curse(dict, "par_filter", par_filter)
+    curse(dict, "par_filter_not", par_filter_not)
+    curse(dict, "par_flat_map", par_flat_map)
