@@ -1,6 +1,7 @@
 from forbiddenfruit import curse
 from collections import defaultdict
 from typing import Callable, Dict, Optional, TypeVar, List
+import functools
 import dask
 
 A = TypeVar("A")
@@ -345,13 +346,9 @@ def pure_map(self: List[A], f: Callable[[A], B]) -> List[B]:
         The new list.
     """
     res = []
-    memoized_results: Dict[int, B] = {}
+    f_cache = functools.cache(f)
     for x in self:
-        h = hash(x)
-        if not h in memoized_results:
-            v = f(x)
-            memoized_results[h] = v
-        res.append(memoized_results[h])
+        res.append(f_cache(x))
     return res
 
 def pure_flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
@@ -369,13 +366,9 @@ def pure_flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
         The new list.
     """
     res = []
-    memoized_results: Dict[int, List[B]] = {}
+    f_cache = functools.cache(f)
     for x in self:
-        h = hash(x)
-        if not h in memoized_results:
-            v = f(x)
-            memoized_results[h] = v
-        for y in memoized_results[h]:
+        for y in f_cache(x):
             res.append(y)
     return res
 
