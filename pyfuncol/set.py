@@ -1,6 +1,7 @@
 from forbiddenfruit import curse
 from collections import defaultdict
 from typing import Callable, Dict, Optional, TypeVar, Set, cast
+import functools
 import dask
 
 A = TypeVar("A")
@@ -46,6 +47,19 @@ def filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
         The filtered set.
     """
     return type(self)(x for x in self if not p(x))
+
+
+def filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
+    """
+    Selects all elements of this set which do not satisfy a predicate.
+
+    Args:
+        p: The predicate not to satisfy.
+
+    Returns:
+        The filtered set.
+    """
+    return {x for x in self if not p(x)}
 
 
 def flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
@@ -267,6 +281,82 @@ def par_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
     return cast(Set[B], type(self)(x for y in applications for x in y))
 
 
+# Pure operations
+
+
+def pure_map(self: Set[A], f: Callable[[A], B]) -> Set[B]:
+    """
+    Builds a new set by applying a function to all elements of this set using memoization to improve performance.
+
+    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
+
+    Type A must be hashable using `hash()` function.
+
+    Args:
+        f: The PURE function to apply to all elements.
+
+    Returns:
+        The new set.
+    """
+    f_cache = functools.cache(f)
+    return cast(Set[B], type(self)(f_cache(x) for x in self))
+
+
+def pure_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
+    """
+    Builds a new set by applying a function to all elements of this set and using the elements of the resulting collections using memoization to improve performance.
+
+    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
+
+    Type A must be hashable using `hash()` function.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new set.
+    """
+    f_cache = functools.cache(f)
+    return cast(Set[B], type(self)(y for x in self for y in f_cache(x)))
+
+
+def pure_filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
+    """
+    Selects all elements of this set which satisfy a predicate using memoization to improve performance.
+
+    WARNING: p must be a PURE function i.e., calling p on the same input must always lead to the same result!
+
+    Type A must be hashable using `hash()` function.
+
+    Args:
+        p: The predicate to satisfy.
+
+    Returns:
+        The filtered set.
+    """
+    p_cache = functools.cache(p)
+    return type(self)(x for x in self if p_cache(x))
+
+
+def pure_filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
+    """
+    Selects all elements of this set which do not satisfy a predicate using memoization to improve performance.
+
+    WARNING: p must be a PURE function i.e., calling p on the same input must always lead to the same result!
+
+    Type A must be hashable using `hash()` function.
+
+
+    Args:
+        p: The predicate not to satisfy.
+
+    Returns:
+        The filtered set.
+    """
+    p_cache = functools.cache(p)
+    return type(self)(x for x in self if not p_cache(x))
+
+
 def extend_set():
     """
     Extends the set and frozenset built-in type with methods.
@@ -311,3 +401,14 @@ def extend_set():
     curse(frozenset, "par_filter", par_filter)
     curse(frozenset, "par_filter_not", par_filter_not)
     curse(frozenset, "par_flat_map", par_flat_map)
+
+    # Pure operations
+    curse(set, "pure_map", pure_map)
+    curse(set, "pure_flat_map", pure_flat_map)
+    curse(set, "pure_filter", pure_filter)
+    curse(set, "pure_filter_not", pure_filter_not)
+
+    curse(frozenset, "pure_map", pure_map)
+    curse(frozenset, "pure_flat_map", pure_flat_map)
+    curse(frozenset, "pure_filter", pure_filter)
+    curse(frozenset, "pure_filter_not", pure_filter_not)

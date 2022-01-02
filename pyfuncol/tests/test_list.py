@@ -1,18 +1,19 @@
 import pyfuncol
 import pytest
 
-l = [1, 2, 3]
-
 
 class Lst(list):
     pass
+
+
+l = [1, 2, 3]
+lst = Lst(l)
 
 
 def test_map():
     assert l.map(lambda x: x * 2) == [2, 4, 6]
 
     # Test that type is preserved
-    lst = Lst(l)
     assert lst.map(lambda x: x) == lst
 
 
@@ -20,7 +21,6 @@ def test_filter():
     assert l.filter(lambda x: x >= 2) == [2, 3]
 
     # Test that type is preserved
-    lst = Lst(l)
     assert lst.filter(lambda x: True) == lst
 
 
@@ -28,15 +28,17 @@ def test_filter_not():
     assert l.filter_not(lambda x: x < 2) == [2, 3]
 
     # Test that type is preserved
-    lst = Lst(l)
     assert lst.filter_not(lambda x: False) == lst
+
+
+def test_filter_not():
+    assert l.filter_not(lambda x: x >= 2) == [1]
 
 
 def test_flat_map():
     assert l.flat_map(lambda x: [x ** 2]) == [1, 4, 9]
 
     # Test that type is preserved
-    lst = Lst(l)
     assert lst.flat_map(lambda x: [x]) == lst
 
 
@@ -149,7 +151,6 @@ def test_take_neg():
     assert a == []
 
     # Test that type is preserved
-    lst = Lst(l)
     assert lst.take(-1) == Lst()
 
 
@@ -158,7 +159,6 @@ def test_take_greater_len():
     assert a == l
 
     # Test that type is preserved
-    lst = Lst(l)
     assert lst.take(4) == lst
 
 
@@ -167,7 +167,6 @@ def test_take_smaller_len():
     assert a == [1, 2]
 
     # Test that type is preserved
-    lst = Lst(l)
     assert lst.take(2) == Lst(l.take(2))
 
 
@@ -187,7 +186,6 @@ def test_par_map():
     assert l.par_map(lambda x: x * 2) == [2, 4, 6]
 
     # Test that type is preserved
-    lst = Lst(l)
     assert lst.par_map(lambda x: x) == lst
 
 
@@ -195,7 +193,6 @@ def test_par_filter():
     assert l.par_filter(lambda x: x >= 2) == [2, 3]
 
     # Test that type is preserved
-    lst = Lst(l)
     assert lst.par_filter(lambda x: True) == lst
 
 
@@ -203,7 +200,6 @@ def test_par_filter_not():
     assert l.par_filter_not(lambda x: x < 2) == [2, 3]
 
     # Test that type is preserved
-    lst = Lst(l)
     assert lst.par_filter_not(lambda x: False) == lst
 
 
@@ -211,5 +207,35 @@ def test_par_flat_map():
     assert l.par_flat_map(lambda x: [x ** 2]) == [1, 4, 9]
 
     # Test that type is preserved
-    lst = Lst(l)
     assert lst.par_flat_map(lambda x: [x]) == lst
+
+
+# Pure operations
+
+
+def test_pure_map():
+    assert l.pure_map(lambda x: x * 2) == [2, 4, 6]
+
+    # Test that type is preserved
+    assert lst.pure_map(lambda x: x * 2) == [2, 4, 6]
+
+
+def test_pure_flat_map():
+    assert l.pure_flat_map(lambda x: [x ** 2]) == [1, 4, 9]
+
+    # Test that type is preserved
+    assert lst.pure_flat_map(lambda x: [x ** 2]) == [1, 4, 9]
+
+
+def test_pure_filter():
+    assert l.pure_filter(lambda x: x >= 2) == [2, 3]
+
+    # Test that type is preserved
+    assert lst.pure_filter(lambda x: x >= 2) == [2, 3]
+
+
+def test_pure_filter_not():
+    assert l.pure_filter_not(lambda x: x >= 2) == [1]
+
+    # Test that type is preserved
+    assert l.pure_filter_not(lambda x: x >= 2) == [1]

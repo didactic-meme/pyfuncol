@@ -2,6 +2,7 @@ from collections import OrderedDict
 import pyfuncol
 
 d = {"a": 1, "b": 2, "c": 3}
+di: OrderedDict[str, int] = OrderedDict(d)
 
 
 def test_contains():
@@ -27,6 +28,10 @@ def test_filter_not():
     # Test that type is preserved
     di: OrderedDict[str, int] = OrderedDict(d)
     assert di.filter_not(lambda kv: False) == di
+
+
+def test_filter_not():
+    assert d.filter_not(lambda kv: kv[1] > 1) == {"a": 1}
 
 
 def test_flat_map():
@@ -95,7 +100,6 @@ def test_par_filter():
     assert d.par_filter(lambda kv: kv[1] > 1) == {"b": 2, "c": 3}
 
     # Test that type is preserved
-    di: OrderedDict[str, int] = OrderedDict(d)
     assert di.par_filter(lambda kv: True) == di
 
 
@@ -103,7 +107,6 @@ def test_par_filter_not():
     assert d.par_filter_not(lambda kv: kv[1] <= 1) == {"b": 2, "c": 3}
 
     # Test that type is preserved
-    di: OrderedDict[str, int] = OrderedDict(d)
     assert di.par_filter_not(lambda kv: False) == di
 
 
@@ -111,7 +114,6 @@ def test_par_flat_map():
     assert d.par_flat_map(lambda kv: {kv[0]: kv[1] ** 2}) == {"a": 1, "b": 4, "c": 9}
 
     # Test that type is preserved
-    di: OrderedDict[str, int] = OrderedDict(d)
     assert di.par_flat_map(lambda kv: {kv[0]: kv[1]}) == di
 
 
@@ -119,5 +121,35 @@ def test_par_map():
     assert d.par_map(lambda kv: (kv[0], kv[1] ** 2)) == {"a": 1, "b": 4, "c": 9}
 
     # Test that type is preserved
-    di: OrderedDict[str, int] = OrderedDict(d)
     assert di.par_map(lambda kv: kv) == di
+
+
+# Pure operations
+
+
+def test_pure_flat_map():
+    assert d.pure_flat_map(lambda kv: {kv[0]: kv[1] ** 2}) == {"a": 1, "b": 4, "c": 9}
+
+    # Test that type is preserved
+    assert di.pure_flat_map(lambda kv: {kv[0]: kv[1] ** 2}) == {"a": 1, "b": 4, "c": 9}
+
+
+def test_pure_map():
+    assert d.pure_map(lambda kv: (kv[0], kv[1] ** 2)) == {"a": 1, "b": 4, "c": 9}
+
+    # Test that type is preserved
+    assert di.pure_map(lambda kv: (kv[0], kv[1] ** 2)) == {"a": 1, "b": 4, "c": 9}
+
+
+def test_pure_filter():
+    assert d.pure_filter(lambda kv: kv[1] > 1) == {"b": 2, "c": 3}
+
+    # Test that type is preserved
+    assert di.pure_filter(lambda kv: kv[1] > 1) == {"b": 2, "c": 3}
+
+
+def test_pure_filter_not():
+    assert d.pure_filter_not(lambda kv: kv[1] > 1) == {"a": 1}
+
+    # Test that type is preserved
+    assert d.pure_filter_not(lambda kv: kv[1] > 1) == {"a": 1}

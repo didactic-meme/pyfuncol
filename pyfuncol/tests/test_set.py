@@ -19,6 +19,10 @@ def test_filter_not():
     assert st.filter_not(lambda x: x < 2) == frozenset({2, 3})
 
 
+def test_filter_not():
+    assert s.filter_not(lambda x: x >= 2) == {1}
+
+
 def test_flat_map():
     assert s.flat_map(lambda x: {x ** 2}) == {1, 4, 9}
     assert st.flat_map(lambda x: {x ** 2}) == frozenset({1, 4, 9})
@@ -158,3 +162,26 @@ def test_par_filter_not():
 def test_par_flat_map():
     assert s.par_flat_map(lambda x: [x ** 2]) == {1, 4, 9}
     assert st.par_flat_map(lambda x: {x ** 2}) == frozenset({1, 4, 9})
+
+
+# Pure operations
+
+
+def test_pure_map():
+    assert s.pure_map(lambda x: x * 2) == {2, 4, 6}
+    assert st.pure_map(lambda x: x * 2) == {2, 4, 6}
+
+
+def test_pure_flat_map():
+    assert s.pure_flat_map(lambda x: [x ** 2]) == {1, 4, 9}
+    assert st.pure_flat_map(lambda x: [x ** 2]) == {1, 4, 9}
+
+
+def test_pure_filter():
+    assert s.pure_filter(lambda x: x >= 2) == {2, 3}
+    assert st.pure_filter(lambda x: x >= 2) == {2, 3}
+
+
+def test_pure_filter_not():
+    assert s.pure_filter_not(lambda x: x >= 2) == {1}
+    assert st.pure_filter_not(lambda x: x >= 2) == {1}
