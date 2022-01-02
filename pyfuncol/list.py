@@ -351,6 +351,7 @@ def pure_map(self: List[A], f: Callable[[A], B]) -> List[B]:
         res.append(f_cache(x))
     return res
 
+
 def pure_flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
     """
     Builds a new list by applying a function to all elements of this list and using the elements of the resulting collections using memoization to improve performance..

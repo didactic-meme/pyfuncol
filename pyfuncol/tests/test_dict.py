@@ -92,9 +92,10 @@ def test_par_map():
 
 # Pure operations
 
+
 def test_pure_flat_map():
     assert d.pure_flat_map(lambda kv: {kv[0]: kv[1] ** 2}) == {"a": 1, "b": 4, "c": 9}
 
+
 def test_pure_map():
     assert d.pure_map(lambda kv: (kv[0], kv[1] ** 2)) == {"a": 1, "b": 4, "c": 9}
-

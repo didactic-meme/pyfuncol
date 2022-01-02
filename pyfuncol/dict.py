@@ -294,6 +294,7 @@ def par_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]) -> Dict[C
 
 # Pure operations
 
+
 def pure_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]) -> Dict[C, D]:
     """
     Builds a new dict by applying a function to all elements of this dict using memoization to improve performance.
@@ -315,7 +316,10 @@ def pure_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]) -> Dict[
         res[k1] = v1
     return res
 
-def pure_flat_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Dict[C, D]]) -> Dict[C, D]:
+
+def pure_flat_map(
+    self: Dict[A, B], f: Callable[[Tuple[A, B]], Dict[C, D]]
+) -> Dict[C, D]:
     """
     Builds a new dict by applying a function to all elements of this dict and using the elements of the resulting collections using memoization to improve performance.
 

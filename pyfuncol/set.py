@@ -255,6 +255,7 @@ def par_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
 
 # Pure operations
 
+
 def pure_map(self: Set[A], f: Callable[[A], B]) -> Set[B]:
     """
     Builds a new set by applying a function to all elements of this set using memoization to improve performance.
@@ -274,6 +275,7 @@ def pure_map(self: Set[A], f: Callable[[A], B]) -> Set[B]:
     for x in self:
         res.add(f_cache(x))
     return res
+
 
 def pure_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
     """
@@ -295,7 +297,6 @@ def pure_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
         for y in f_cache(x):
             res.add(y)
     return res
-
 
 
 def extend_set():
