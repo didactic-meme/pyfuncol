@@ -19,7 +19,7 @@ def map(self: List[A], f: Callable[[A], B]) -> List[B]:
     Returns:
         The new list.
     """
-    return cast(List[B], type(self)([f(x) for x in self]))
+    return cast(List[B], type(self)(f(x) for x in self))
 
 
 def filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
@@ -32,7 +32,7 @@ def filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
     Returns:
         The filtered list.
     """
-    return type(self)([x for x in self if p(x)])
+    return type(self)(x for x in self if p(x))
 
 
 def filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
@@ -45,7 +45,7 @@ def filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
     Returns:
         The filtered list.
     """
-    return type(self)([x for x in self if not p(x)])
+    return type(self)(x for x in self if not p(x))
 
 
 def flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
@@ -58,7 +58,7 @@ def flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
     Returns:
         The new list.
     """
-    return cast(List[B], type(self)([y for x in self for y in f(x)]))
+    return cast(List[B], type(self)(y for x in self for y in f(x)))
 
 
 def flatten(self: List[A]) -> List[B]:
@@ -68,7 +68,7 @@ def flatten(self: List[A]) -> List[B]:
     Returns:
         The flattened list.
     """
-    return cast(List[B], [y for x in self for y in x])
+    return cast(List[B], type(self)(y for x in self for y in x))
 
 
 def contains(self: List[A], elem: A) -> bool:
