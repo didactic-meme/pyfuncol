@@ -1,5 +1,5 @@
 from forbiddenfruit import curse
-from typing import Callable, Dict, Optional, Tuple, TypeVar, List
+from typing import Callable, Dict, Optional, Tuple, TypeVar, List, cast
 import functools
 import dask
 
@@ -43,7 +43,7 @@ def filter(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
     Returns:
         The filtered dict.
     """
-    return {k: v for k, v in self.items() if p((k, v))}
+    return type(self)({k: v for k, v in self.items() if p((k, v))})
 
 
 def filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
@@ -51,12 +51,12 @@ def filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]
     Selects all elements of this dict which do not satisfy a predicate.
 
     Args:
-        p: The predicate not to satisfy.
+        p: The predicate to not satisfy.
 
     Returns:
         The filtered dict.
     """
-    return {k: v for k, v in self.items() if not p((k, v))}
+    return type(self)({k: v for k, v in self.items() if not p((k, v))})
 
 
 def flat_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Dict[C, D]]) -> Dict[C, D]:
@@ -69,7 +69,7 @@ def flat_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Dict[C, D]]) -> Dict[C
     Returns:
         The new dict.
     """
-    res = {}
+    res = cast(Dict[C, D], type(self)())
     for k, v in self.items():
         d = f((k, v))
         res.update(d)
@@ -83,7 +83,8 @@ def foreach(self: Dict[A, B], f: Callable[[Tuple[A, B]], U]) -> None:
     Args:
         f: The function to apply to all elements for its side effects.
     """
-    [f((k, v)) for k, v in self.items()]
+    for k, v in self.items():
+        f((k, v))
 
 
 def is_empty(self: Dict[A, B]) -> bool:
@@ -106,11 +107,7 @@ def map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]) -> Dict[C, D]
     Returns:
         The new dict.
     """
-    res = {}
-    for k, v in self.items():
-        k1, v1 = f((k, v))
-        res[k1] = v1
-    return res
+    return cast(Dict[C, D], type(self)(f(x) for x in self.items()))
 
 
 def to_list(self: Dict[A, B]) -> List[Tuple[A, B]]:
@@ -246,7 +243,7 @@ def par_filter(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]
         The filtered dict.
     """
     preds = dask.compute(*(dask.delayed(p)(x) for x in self.items()))
-    return {k: v for i, (k, v) in enumerate(self.items()) if preds[i]}
+    return type(self)({k: v for i, (k, v) in enumerate(self.items()) if preds[i]})
 
 
 def par_filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
@@ -260,7 +257,7 @@ def par_filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A
         The filtered dict.
     """
     preds = dask.compute(*(dask.delayed(p)(x) for x in self.items()))
-    return {k: v for i, (k, v) in enumerate(self.items()) if not preds[i]}
+    return type(self)({k: v for i, (k, v) in enumerate(self.items()) if not preds[i]})
 
 
 def par_flat_map(
@@ -276,7 +273,9 @@ def par_flat_map(
         The new dict.
     """
     applications = dask.compute(*(dask.delayed(f)(x) for x in self.items()))
-    return {k: v for y in applications for k, v in y.items()}
+    return cast(
+        Dict[C, D], type(self)({k: v for y in applications for k, v in y.items()})
+    )
 
 
 def par_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]) -> Dict[C, D]:
@@ -289,7 +288,10 @@ def par_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]) -> Dict[C
     Returns:
         The new dict.
     """
-    return dict(dask.compute(*(dask.delayed(f)(x) for x in self.items())))
+    return cast(
+        Dict[C, D],
+        type(self)((dask.compute(*(dask.delayed(f)(x) for x in self.items())))),
+    )
 
 
 # Pure operations
@@ -309,12 +311,8 @@ def pure_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]) -> Dict[
     Returns:
         The new dict.
     """
-    res = {}
     f_cache = functools.cache(f)
-    for k, v in self.items():
-        k1, v1 = f_cache((k, v))
-        res[k1] = v1
-    return res
+    return cast(Dict[C, D], type(self)(f_cache(x) for x in self.items()))
 
 
 def pure_flat_map(
@@ -333,7 +331,7 @@ def pure_flat_map(
     Returns:
         The new dict.
     """
-    res = {}
+    res = cast(Dict[C, D], type(self)())
     f_cache = functools.cache(f)
     for k, v in self.items():
         d = f_cache((k, v))
@@ -357,7 +355,7 @@ def pure_filter(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B
         The filtered dict.
     """
     p_cache = functools.cache(p)
-    return {k: v for k, v in self.items() if p_cache((k, v))}
+    return type(self)({k: v for k, v in self.items() if p_cache((k, v))})
 
 
 def pure_filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
@@ -376,7 +374,7 @@ def pure_filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[
         The filtered dict.
     """
     p_cache = functools.cache(p)
-    return {k: v for k, v in self.items() if not p_cache((k, v))}
+    return type(self)({k: v for k, v in self.items() if not p_cache((k, v))})
 
 
 def extend_dict():

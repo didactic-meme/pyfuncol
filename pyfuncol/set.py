@@ -1,6 +1,6 @@
 from forbiddenfruit import curse
 from collections import defaultdict
-from typing import Callable, Dict, Optional, TypeVar, Set
+from typing import Callable, Dict, Optional, TypeVar, Set, cast
 import functools
 import dask
 
@@ -20,7 +20,7 @@ def map(self: Set[A], f: Callable[[A], B]) -> Set[B]:
     Returns:
         The new set.
     """
-    return {f(x) for x in self}
+    return cast(Set[B], type(self)(f(x) for x in self))
 
 
 def filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
@@ -33,7 +33,7 @@ def filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
     Returns:
         The filtered set.
     """
-    return {x for x in self if p(x)}
+    return type(self)(x for x in self if p(x))
 
 
 def filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
@@ -41,12 +41,12 @@ def filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
     Selects all elements of this set which do not satisfy a predicate.
 
     Args:
-        p: The predicate not to satisfy.
+        p: The predicate to not satisfy.
 
     Returns:
         The filtered set.
     """
-    return {x for x in self if not p(x)}
+    return type(self)(x for x in self if not p(x))
 
 
 def flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
@@ -59,7 +59,7 @@ def flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
     Returns:
         The new set.
     """
-    return {y for x in self for y in f(x)}
+    return cast(Set[B], type(self)(y for x in self for y in f(x)))
 
 
 def contains(self: Set[A], elem: A) -> bool:
@@ -82,7 +82,8 @@ def foreach(self: Set[A], f: Callable[[A], U]) -> None:
     Args:
         f: The function to apply to all elements for its side effects.
     """
-    {f(x) for x in self}
+    for x in self:
+        f(x)
 
 
 def group_by(self: Set[A], f: Callable[[A], K]) -> Dict[K, Set[A]]:
@@ -95,7 +96,8 @@ def group_by(self: Set[A], f: Callable[[A], K]) -> Dict[K, Set[A]]:
     Returns:
         A dictionary where elements are grouped according to the grouping function.
     """
-    d = defaultdict(set)
+    # frozenset does not have `add`
+    d = defaultdict(set if isinstance(self, frozenset) else type(self))
     for x in self:
         k = f(x)
         d[k].add(x)
@@ -221,7 +223,7 @@ def par_map(self: Set[A], f: Callable[[A], B]) -> Set[B]:
     Returns:
         The new set.
     """
-    return set(dask.compute(*(dask.delayed(f)(x) for x in self)))
+    return cast(Set[B], type(self)((dask.compute(*(dask.delayed(f)(x) for x in self)))))
 
 
 def par_filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
@@ -235,7 +237,7 @@ def par_filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
         The filtered set.
     """
     preds = dask.compute(*(dask.delayed(p)(x) for x in self))
-    return {x for i, x in enumerate(self) if preds[i]}
+    return type(self)(x for i, x in enumerate(self) if preds[i])
 
 
 def par_filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
@@ -249,7 +251,7 @@ def par_filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
         The filtered set.
     """
     preds = dask.compute(*(dask.delayed(p)(x) for x in self))
-    return {x for i, x in enumerate(self) if not preds[i]}
+    return type(self)(x for i, x in enumerate(self) if not preds[i])
 
 
 def par_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
@@ -263,7 +265,7 @@ def par_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
         The new set.
     """
     applications = dask.compute(*(dask.delayed(f)(x) for x in self))
-    return {x for y in applications for x in y}
+    return cast(Set[B], type(self)(x for y in applications for x in y))
 
 
 # Pure operations
@@ -284,7 +286,7 @@ def pure_map(self: Set[A], f: Callable[[A], B]) -> Set[B]:
         The new set.
     """
     f_cache = functools.cache(f)
-    return {f_cache(x) for x in self}
+    return cast(Set[B], type(self)(f_cache(x) for x in self))
 
 
 def pure_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
@@ -302,7 +304,7 @@ def pure_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
         The new set.
     """
     f_cache = functools.cache(f)
-    return {y for x in self for y in f_cache(x)}
+    return cast(Set[B], type(self)(y for x in self for y in f_cache(x)))
 
 
 def pure_filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
@@ -320,7 +322,7 @@ def pure_filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
         The filtered set.
     """
     p_cache = functools.cache(p)
-    return {x for x in self if p_cache(x)}
+    return type(self)(x for x in self if p_cache(x))
 
 
 def pure_filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
@@ -339,12 +341,12 @@ def pure_filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
         The filtered set.
     """
     p_cache = functools.cache(p)
-    return {x for x in self if not p_cache(x)}
+    return type(self)(x for x in self if not p_cache(x))
 
 
 def extend_set():
     """
-    Extends the set built-in type with methods.
+    Extends the set and frozenset built-in type with methods.
     """
     curse(set, "map", map)
     curse(set, "filter", filter)
@@ -361,14 +363,39 @@ def extend_set():
     curse(set, "forall", forall)
     curse(set, "length", length)
 
+    curse(frozenset, "map", map)
+    curse(frozenset, "filter", filter)
+    curse(frozenset, "filter_not", filter_not)
+    curse(frozenset, "flat_map", flat_map)
+    curse(frozenset, "contains", contains)
+    curse(frozenset, "foreach", foreach)
+    curse(frozenset, "group_by", group_by)
+    curse(frozenset, "is_empty", is_empty)
+    curse(frozenset, "size", size)
+    curse(frozenset, "find", find)
+    curse(frozenset, "fold_left", fold_left)
+    curse(frozenset, "fold_right", fold_right)
+    curse(frozenset, "forall", forall)
+    curse(frozenset, "length", length)
+
     # Parallel operations
     curse(set, "par_map", par_map)
     curse(set, "par_filter", par_filter)
     curse(set, "par_filter_not", par_filter_not)
     curse(set, "par_flat_map", par_flat_map)
 
+    curse(frozenset, "par_map", par_map)
+    curse(frozenset, "par_filter", par_filter)
+    curse(frozenset, "par_filter_not", par_filter_not)
+    curse(frozenset, "par_flat_map", par_flat_map)
+
     # Pure operations
     curse(set, "pure_map", pure_map)
     curse(set, "pure_flat_map", pure_flat_map)
     curse(set, "pure_filter", pure_filter)
     curse(set, "pure_filter_not", pure_filter_not)
+
+    curse(frozenset, "pure_map", pure_map)
+    curse(frozenset, "pure_flat_map", pure_flat_map)
+    curse(frozenset, "pure_filter", pure_filter)
+    curse(frozenset, "pure_filter_not", pure_filter_not)
