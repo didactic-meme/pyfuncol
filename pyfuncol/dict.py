@@ -1,5 +1,6 @@
 from forbiddenfruit import curse
 from typing import Callable, Dict, Optional, Tuple, TypeVar, List
+import functools
 import dask
 
 A = TypeVar("A")
@@ -43,6 +44,19 @@ def filter(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
         The filtered dict.
     """
     return {k: v for k, v in self.items() if p((k, v))}
+
+
+def filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
+    """
+    Selects all elements of this dict which do not satisfy a predicate.
+
+    Args:
+        p: The predicate not to satisfy.
+
+    Returns:
+        The filtered dict.
+    """
+    return {k: v for k, v in self.items() if not p((k, v))}
 
 
 def flat_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Dict[C, D]]) -> Dict[C, D]:
@@ -218,19 +232,6 @@ def find(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Optional[Tuple[A
     return None
 
 
-def filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
-    """
-    Selects all elements of this iterable collection which do not satisfy a predicate.
-
-    Args:
-        p: The predicate to satisfy.
-
-    Returns:
-        The filtered dict.
-    """
-    return {k: v for k, v in self.items() if not p((k, v))}
-
-
 # Parallel operations
 
 
@@ -291,6 +292,93 @@ def par_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]) -> Dict[C
     return dict(dask.compute(*(dask.delayed(f)(x) for x in self.items())))
 
 
+# Pure operations
+
+
+def pure_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]) -> Dict[C, D]:
+    """
+    Builds a new dict by applying a function to all elements of this dict using memoization to improve performance.
+
+    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
+
+    Type A must be hashable using `hash()` function.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new dict.
+    """
+    res = {}
+    f_cache = functools.cache(f)
+    for k, v in self.items():
+        k1, v1 = f_cache((k, v))
+        res[k1] = v1
+    return res
+
+
+def pure_flat_map(
+    self: Dict[A, B], f: Callable[[Tuple[A, B]], Dict[C, D]]
+) -> Dict[C, D]:
+    """
+    Builds a new dict by applying a function to all elements of this dict and using the elements of the resulting collections using memoization to improve performance.
+
+    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
+
+    Type A must be hashable using `hash()` function.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new dict.
+    """
+    res = {}
+    f_cache = functools.cache(f)
+    for k, v in self.items():
+        d = f_cache((k, v))
+        res.update(d)
+    return res
+
+
+def pure_filter(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
+    """
+    Selects all elements of this dict which satisfy a predicate using memoization to improve performance.
+
+    WARNING: p must be a PURE function i.e., calling p on the same input must always lead to the same result!
+
+    Type A must be hashable using `hash()` function.
+
+
+    Args:
+        p: The predicate to satisfy.
+
+    Returns:
+        The filtered dict.
+    """
+    p_cache = functools.cache(p)
+    return {k: v for k, v in self.items() if p_cache((k, v))}
+
+
+def pure_filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
+    """
+    Selects all elements of this dict which do not satisfy a predicate using memoization to improve performance.
+
+    WARNING: p must be a PURE function i.e., calling p on the same input must always lead to the same result!
+
+    Type A must be hashable using `hash()` function.
+
+
+    Args:
+        p: The predicate not to satisfy.
+
+    Returns:
+        The filtered dict.
+    """
+    p_cache = functools.cache(p)
+    return {k: v for k, v in self.items() if not p_cache((k, v))}
+
+
 def extend_dict():
     """
     Extends the dict built-in type with methods.
@@ -298,6 +386,7 @@ def extend_dict():
     curse(dict, "contains", contains)
     curse(dict, "size", size)
     curse(dict, "filter", filter)
+    curse(dict, "filter_not", filter_not)
     curse(dict, "flat_map", flat_map)
     curse(dict, "foreach", foreach)
     curse(dict, "is_empty", is_empty)
@@ -308,10 +397,15 @@ def extend_dict():
     curse(dict, "fold_right", fold_right)
     curse(dict, "forall", forall)
     curse(dict, "find", find)
-    curse(dict, "filter_not", filter_not)
 
     # Parallel operations
     curse(dict, "par_map", par_map)
     curse(dict, "par_filter", par_filter)
     curse(dict, "par_filter_not", par_filter_not)
     curse(dict, "par_flat_map", par_flat_map)
+
+    # Pure operations
+    curse(dict, "pure_map", pure_map)
+    curse(dict, "pure_flat_map", pure_flat_map)
+    curse(dict, "pure_filter", pure_filter)
+    curse(dict, "pure_filter_not", pure_filter_not)
