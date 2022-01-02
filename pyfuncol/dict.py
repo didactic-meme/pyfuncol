@@ -301,7 +301,7 @@ def pure_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]) -> Dict[
 
     WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
 
-    type A must be hashable using `hash()` function.
+    Type A must be hashable using `hash()` function.
 
     Args:
         f: The function to apply to all elements.
@@ -325,7 +325,7 @@ def pure_flat_map(
 
     WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
 
-    type A must be hashable using `hash()` function.
+    Type A must be hashable using `hash()` function.
 
     Args:
         f: The function to apply to all elements.

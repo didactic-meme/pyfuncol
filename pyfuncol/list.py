@@ -337,7 +337,7 @@ def pure_map(self: List[A], f: Callable[[A], B]) -> List[B]:
 
     WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
 
-    type A must be hashable using `hash()` function.
+    Type A must be hashable using `hash()` function.
 
     Args:
         f: The PURE function to apply to all elements.
@@ -358,7 +358,7 @@ def pure_flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
 
     WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
 
-    type A must be hashable using `hash()` function.
+    Type A must be hashable using `hash()` function.
 
     Args:
         f: The function to apply to all elements.
