@@ -277,7 +277,7 @@ def pure_map(self: Set[A], f: Callable[[A], B]) -> Set[B]:
 
 def pure_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
     """
-    Builds a new set by applying a function to all elements of this set and using the elements of the resulting collections using memoization to improve performance..
+    Builds a new set by applying a function to all elements of this set and using the elements of the resulting collections using memoization to improve performance.
 
     WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
 
@@ -323,5 +323,5 @@ def extend_set():
     curse(set, "par_flat_map", par_flat_map)
 
     # Pure operations
-    curse(set, "pure_map", par_map)
-    curse(set, "pure_flat_map", par_flat_map)
+    curse(set, "pure_map", pure_map)
+    curse(set, "pure_flat_map", pure_flat_map)

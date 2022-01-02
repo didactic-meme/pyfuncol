@@ -1,5 +1,6 @@
 from forbiddenfruit import curse
 from typing import Callable, Dict, Optional, Tuple, TypeVar, List
+import functools
 import dask
 
 A = TypeVar("A")
@@ -291,6 +292,51 @@ def par_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]) -> Dict[C
     return dict(dask.compute(*(dask.delayed(f)(x) for x in self.items())))
 
 
+# Pure operations
+
+def pure_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]) -> Dict[C, D]:
+    """
+    Builds a new dict by applying a function to all elements of this dict using memoization to improve performance.
+
+    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
+
+    type A must be hashable using `hash()` function.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new dict.
+    """
+    res = {}
+    f_cache = functools.cache(f)
+    for k, v in self.items():
+        k1, v1 = f_cache((k, v))
+        res[k1] = v1
+    return res
+
+def pure_flat_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Dict[C, D]]) -> Dict[C, D]:
+    """
+    Builds a new dict by applying a function to all elements of this dict and using the elements of the resulting collections using memoization to improve performance.
+
+    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
+
+    type A must be hashable using `hash()` function.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new dict.
+    """
+    res = {}
+    f_cache = functools.cache(f)
+    for k, v in self.items():
+        d = f_cache((k, v))
+        res.update(d)
+    return res
+
+
 def extend_dict():
     """
     Extends the dict built-in type with methods.
@@ -315,3 +361,7 @@ def extend_dict():
     curse(dict, "par_filter", par_filter)
     curse(dict, "par_filter_not", par_filter_not)
     curse(dict, "par_flat_map", par_flat_map)
+
+    # Pure operations
+    curse(dict, "pure_map", pure_map)
+    curse(dict, "pure_flat_map", pure_flat_map)
