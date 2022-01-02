@@ -33,3 +33,5 @@ pyfuncol also provides parallel operations (for now `par_map`, `par_flat_map`, `
 {"a": 1, "b": 2, "c": 3}.par_flat_map(lambda kv: {kv[0]: kv[1] ** 2})
 # {"a": 1, "b": 4, "c": 9}
 ```
+
+We support all subclasses with default constructors (`OrderedDict`, for example).

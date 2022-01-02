@@ -49,7 +49,7 @@ import pyfuncol
 [1, 2, 3, 4].par_map(lambda x: x * 2).par_filter(lambda x: x > 4)
 # [6, 8]
 
-{1, 2, 3, 4}.par_map(lambda x: x * 2).par_filter(lambda x: x > 4)
+{1, 2, 3, 4}.par_map(lambda x: x * 2).par_filter_not(lambda x: x <= 4)
 # {6, 8}
 
 {"a": 1, "b": 2, "c": 3}.par_flat_map(lambda kv: {kv[0]: kv[1] ** 2})
@@ -65,6 +65,8 @@ For dictionaries, please refer to the [docs](https://pyfuncol.readthedocs.io/en/
 For sets and frozensets, please refer to the [docs](https://pyfuncol.readthedocs.io/en/latest/pyfuncol.html#module-pyfuncol.set).
 
 For more details, please have a look at the [API reference](https://pyfuncol.readthedocs.io/en/latest/modules.html).
+
+We support all subclasses with default constructors (`OrderedDict`, for example).
 
 ## Documentation
 
