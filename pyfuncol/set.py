@@ -35,6 +35,7 @@ def filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
     """
     return {x for x in self if p(x)}
 
+
 def filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
     """
     Selects all elements of this set which do not satisfy a predicate.
@@ -46,6 +47,7 @@ def filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
         The filtered set.
     """
     return {x for x in self if not p(x)}
+
 
 def flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
     """
@@ -302,6 +304,7 @@ def pure_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
     f_cache = functools.cache(f)
     return {y for x in self for y in f_cache(x)}
 
+
 def pure_filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
     """
     Selects all elements of this set which satisfy a predicate using memoization to improve performance.
@@ -318,6 +321,7 @@ def pure_filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
     """
     p_cache = functools.cache(p)
     return {x for x in self if p_cache(x)}
+
 
 def pure_filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
     """
@@ -336,6 +340,7 @@ def pure_filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
     """
     p_cache = functools.cache(p)
     return {x for x in self if not p_cache(x)}
+
 
 def extend_set():
     """

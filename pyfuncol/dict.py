@@ -340,6 +340,7 @@ def pure_flat_map(
         res.update(d)
     return res
 
+
 def pure_filter(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
     """
     Selects all elements of this dict which satisfy a predicate using memoization to improve performance.
@@ -376,6 +377,7 @@ def pure_filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[
     """
     p_cache = functools.cache(p)
     return {k: v for k, v in self.items() if not p_cache((k, v))}
+
 
 def extend_dict():
     """

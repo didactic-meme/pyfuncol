@@ -35,6 +35,7 @@ def filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
     """
     return [x for x in self if p(x)]
 
+
 def filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
     """
     Selects all elements of this list which do not satisfy a predicate.
@@ -46,6 +47,7 @@ def filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
         The filtered list.
     """
     return [x for x in self if not p(x)]
+
 
 def flat_map(self: List[A], f: Callable[[A], List[B]]) -> List[B]:
     """
@@ -395,6 +397,7 @@ def pure_filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
     p_cache = functools.cache(p)
     return [x for x in self if p_cache(x)]
 
+
 def pure_filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
     """
     Selects all elements of this list which do not satisfy a predicate using memoization to improve performance.
@@ -412,6 +415,7 @@ def pure_filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
     """
     p_cache = functools.cache(p)
     return [x for x in self if not p_cache(x)]
+
 
 def extend_list():
     """
