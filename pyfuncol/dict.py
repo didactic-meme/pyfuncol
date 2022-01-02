@@ -46,6 +46,19 @@ def filter(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
     return {k: v for k, v in self.items() if p((k, v))}
 
 
+def filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
+    """
+    Selects all elements of this dict which do not satisfy a predicate.
+
+    Args:
+        p: The predicate not to satisfy.
+
+    Returns:
+        The filtered dict.
+    """
+    return {k: v for k, v in self.items() if not p((k, v))}
+
+
 def flat_map(self: Dict[A, B], f: Callable[[Tuple[A, B]], Dict[C, D]]) -> Dict[C, D]:
     """
     Builds a new dict by applying a function to all elements of this dict and using the elements of the resulting collections.
@@ -219,19 +232,6 @@ def find(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Optional[Tuple[A
     return None
 
 
-def filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
-    """
-    Selects all elements of this iterable collection which do not satisfy a predicate.
-
-    Args:
-        p: The predicate to satisfy.
-
-    Returns:
-        The filtered dict.
-    """
-    return {k: v for k, v in self.items() if not p((k, v))}
-
-
 # Parallel operations
 
 
@@ -340,6 +340,42 @@ def pure_flat_map(
         res.update(d)
     return res
 
+def pure_filter(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
+    """
+    Selects all elements of this dict which satisfy a predicate using memoization to improve performance.
+
+    WARNING: p must be a PURE function i.e., calling p on the same input must always lead to the same result!
+
+    Type A must be hashable using `hash()` function.
+
+
+    Args:
+        p: The predicate to satisfy.
+
+    Returns:
+        The filtered dict.
+    """
+    p_cache = functools.cache(p)
+    return {k: v for k, v in self.items() if p_cache((k, v))}
+
+
+def pure_filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[A, B]:
+    """
+    Selects all elements of this dict which do not satisfy a predicate using memoization to improve performance.
+
+    WARNING: p must be a PURE function i.e., calling p on the same input must always lead to the same result!
+
+    Type A must be hashable using `hash()` function.
+
+
+    Args:
+        p: The predicate not to satisfy.
+
+    Returns:
+        The filtered dict.
+    """
+    p_cache = functools.cache(p)
+    return {k: v for k, v in self.items() if not p_cache((k, v))}
 
 def extend_dict():
     """
@@ -348,6 +384,7 @@ def extend_dict():
     curse(dict, "contains", contains)
     curse(dict, "size", size)
     curse(dict, "filter", filter)
+    curse(dict, "filter_not", filter_not)
     curse(dict, "flat_map", flat_map)
     curse(dict, "foreach", foreach)
     curse(dict, "is_empty", is_empty)
@@ -358,7 +395,6 @@ def extend_dict():
     curse(dict, "fold_right", fold_right)
     curse(dict, "forall", forall)
     curse(dict, "find", find)
-    curse(dict, "filter_not", filter_not)
 
     # Parallel operations
     curse(dict, "par_map", par_map)
@@ -369,3 +405,5 @@ def extend_dict():
     # Pure operations
     curse(dict, "pure_map", pure_map)
     curse(dict, "pure_flat_map", pure_flat_map)
+    curse(dict, "pure_filter", pure_filter)
+    curse(dict, "pure_filter_not", pure_filter_not)
