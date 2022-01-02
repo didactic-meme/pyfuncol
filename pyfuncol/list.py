@@ -382,7 +382,7 @@ def pure_filter(self: List[A], p: Callable[[A], bool]) -> List[A]:
     """
     Selects all elements of this list which satisfy a predicate using memoization to improve performance.
 
-    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
+    WARNING: p must be a PURE function i.e., calling p on the same input must always lead to the same result!
 
     Type A must be hashable using `hash()` function.
 
@@ -399,7 +399,7 @@ def pure_filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
     """
     Selects all elements of this list which do not satisfy a predicate using memoization to improve performance.
 
-    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!
+    WARNING: p must be a PURE function i.e., calling p on the same input must always lead to the same result!
 
     Type A must be hashable using `hash()` function.
 

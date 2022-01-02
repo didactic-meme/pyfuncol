@@ -35,6 +35,17 @@ def filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
     """
     return {x for x in self if p(x)}
 
+def filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
+    """
+    Selects all elements of this set which do not satisfy a predicate.
+
+    Args:
+        p: The predicate not to satisfy.
+
+    Returns:
+        The filtered set.
+    """
+    return {x for x in self if not p(x)}
 
 def flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
     """
@@ -270,11 +281,8 @@ def pure_map(self: Set[A], f: Callable[[A], B]) -> Set[B]:
     Returns:
         The new set.
     """
-    res = set()
     f_cache = functools.cache(f)
-    for x in self:
-        res.add(f_cache(x))
-    return res
+    return {f_cache(x) for x in self}
 
 
 def pure_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
@@ -291,13 +299,43 @@ def pure_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Set[B]:
     Returns:
         The new set.
     """
-    res = set()
     f_cache = functools.cache(f)
-    for x in self:
-        for y in f_cache(x):
-            res.add(y)
-    return res
+    return {y for x in self for y in f_cache(x)}
 
+def pure_filter(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
+    """
+    Selects all elements of this set which satisfy a predicate using memoization to improve performance.
+
+    WARNING: p must be a PURE function i.e., calling p on the same input must always lead to the same result!
+
+    Type A must be hashable using `hash()` function.
+
+    Args:
+        p: The predicate to satisfy.
+
+    Returns:
+        The filtered set.
+    """
+    p_cache = functools.cache(p)
+    return {x for x in self if p_cache(x)}
+
+def pure_filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
+    """
+    Selects all elements of this set which do not satisfy a predicate using memoization to improve performance.
+
+    WARNING: p must be a PURE function i.e., calling p on the same input must always lead to the same result!
+
+    Type A must be hashable using `hash()` function.
+
+
+    Args:
+        p: The predicate not to satisfy.
+
+    Returns:
+        The filtered set.
+    """
+    p_cache = functools.cache(p)
+    return {x for x in self if not p_cache(x)}
 
 def extend_set():
     """
@@ -305,6 +343,7 @@ def extend_set():
     """
     curse(set, "map", map)
     curse(set, "filter", filter)
+    curse(set, "filter_not", filter_not)
     curse(set, "flat_map", flat_map)
     curse(set, "contains", contains)
     curse(set, "foreach", foreach)
@@ -326,3 +365,5 @@ def extend_set():
     # Pure operations
     curse(set, "pure_map", pure_map)
     curse(set, "pure_flat_map", pure_flat_map)
+    curse(set, "pure_filter", pure_filter)
+    curse(set, "pure_filter_not", pure_filter_not)
