@@ -58,7 +58,7 @@ pyfuncol provides parallel operations (for now `par_map`, `par_flat_map`, `par_f
 # {"a": 1, "b": 4, "c": 9}
 ```
 
-pyfuncol provides operations leveraging memoization to improve performance (for now `pure_map`, `pure_flat_map`, `par_filter` and `par_filter_not`). These versions work only for **pure** functions (i.e., all calls to the same args return the same value) on hashable inputs:
+pyfuncol provides operations leveraging memoization to improve performance (for now `pure_map`, `pure_flat_map`, `pure_filter` and `pure_filter_not`). These versions work only for **pure** functions (i.e., all calls to the same args return the same value) on hashable inputs:
 
 ```python
 [1, 2, 3, 4].pure_map(lambda x: x * 2).pure_filter(lambda x: x > 4)
