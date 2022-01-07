@@ -13,7 +13,7 @@ setup(
     license="MIT",
     keywords="functional pipeline data collection chain parallel",
     packages=find_packages(exclude=["contrib", "docs", "*tests*", "test"]),
-    version="1.1",
+    version="1.2",
     install_requires=["forbiddenfruit"],
     extras_requires={"dev": ["pytest", "pytest-cov", "myst-parser", "black", "Sphinx", "sphinx-rtd-theme"]},
     classifiers=[
