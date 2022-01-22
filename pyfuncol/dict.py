@@ -1,4 +1,3 @@
-from forbiddenfruit import curse
 from typing import Callable, Dict, Optional, Tuple, TypeVar, List, cast
 import functools
 import dask
@@ -375,35 +374,3 @@ def pure_filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[
     """
     p_cache = functools.cache(p)
     return type(self)({k: v for k, v in self.items() if not p_cache((k, v))})
-
-
-def extend_dict():
-    """
-    Extends the dict built-in type with methods.
-    """
-    curse(dict, "contains", contains)
-    curse(dict, "size", size)
-    curse(dict, "filter", filter)
-    curse(dict, "filter_not", filter_not)
-    curse(dict, "flat_map", flat_map)
-    curse(dict, "foreach", foreach)
-    curse(dict, "is_empty", is_empty)
-    curse(dict, "map", map)
-    curse(dict, "to_list", to_list)
-    curse(dict, "count", count)
-    curse(dict, "fold_left", fold_left)
-    curse(dict, "fold_right", fold_right)
-    curse(dict, "forall", forall)
-    curse(dict, "find", find)
-
-    # Parallel operations
-    curse(dict, "par_map", par_map)
-    curse(dict, "par_filter", par_filter)
-    curse(dict, "par_filter_not", par_filter_not)
-    curse(dict, "par_flat_map", par_flat_map)
-
-    # Pure operations
-    curse(dict, "pure_map", pure_map)
-    curse(dict, "pure_flat_map", pure_flat_map)
-    curse(dict, "pure_filter", pure_filter)
-    curse(dict, "pure_filter_not", pure_filter_not)

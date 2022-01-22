@@ -1,4 +1,3 @@
-from forbiddenfruit import curse
 from collections import defaultdict
 from typing import Callable, Dict, Optional, TypeVar, Set, cast
 import functools
@@ -342,60 +341,3 @@ def pure_filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
     """
     p_cache = functools.cache(p)
     return type(self)(x for x in self if not p_cache(x))
-
-
-def extend_set():
-    """
-    Extends the set and frozenset built-in type with methods.
-    """
-    curse(set, "map", map)
-    curse(set, "filter", filter)
-    curse(set, "filter_not", filter_not)
-    curse(set, "flat_map", flat_map)
-    curse(set, "contains", contains)
-    curse(set, "foreach", foreach)
-    curse(set, "group_by", group_by)
-    curse(set, "is_empty", is_empty)
-    curse(set, "size", size)
-    curse(set, "find", find)
-    curse(set, "fold_left", fold_left)
-    curse(set, "fold_right", fold_right)
-    curse(set, "forall", forall)
-    curse(set, "length", length)
-
-    curse(frozenset, "map", map)
-    curse(frozenset, "filter", filter)
-    curse(frozenset, "filter_not", filter_not)
-    curse(frozenset, "flat_map", flat_map)
-    curse(frozenset, "contains", contains)
-    curse(frozenset, "foreach", foreach)
-    curse(frozenset, "group_by", group_by)
-    curse(frozenset, "is_empty", is_empty)
-    curse(frozenset, "size", size)
-    curse(frozenset, "find", find)
-    curse(frozenset, "fold_left", fold_left)
-    curse(frozenset, "fold_right", fold_right)
-    curse(frozenset, "forall", forall)
-    curse(frozenset, "length", length)
-
-    # Parallel operations
-    curse(set, "par_map", par_map)
-    curse(set, "par_filter", par_filter)
-    curse(set, "par_filter_not", par_filter_not)
-    curse(set, "par_flat_map", par_flat_map)
-
-    curse(frozenset, "par_map", par_map)
-    curse(frozenset, "par_filter", par_filter)
-    curse(frozenset, "par_filter_not", par_filter_not)
-    curse(frozenset, "par_flat_map", par_flat_map)
-
-    # Pure operations
-    curse(set, "pure_map", pure_map)
-    curse(set, "pure_flat_map", pure_flat_map)
-    curse(set, "pure_filter", pure_filter)
-    curse(set, "pure_filter_not", pure_filter_not)
-
-    curse(frozenset, "pure_map", pure_map)
-    curse(frozenset, "pure_flat_map", pure_flat_map)
-    curse(frozenset, "pure_filter", pure_filter)
-    curse(frozenset, "pure_filter_not", pure_filter_not)

@@ -1,4 +1,3 @@
-from forbiddenfruit import curse
 from collections import defaultdict
 from typing import Callable, Dict, Optional, TypeVar, List, cast
 import functools
@@ -418,41 +417,3 @@ def pure_filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
     """
     p_cache = functools.cache(p)
     return type(self)(x for x in self if not p_cache(x))
-
-
-def extend_list():
-    """
-    Extends the list built-in type with methods.
-    """
-    curse(list, "map", map)
-    curse(list, "filter", filter)
-    curse(list, "filter_not", filter_not)
-    curse(list, "flat_map", flat_map)
-    curse(list, "flatten", flatten)
-    curse(list, "contains", contains)
-    curse(list, "distinct", distinct)
-    curse(list, "foreach", foreach)
-    curse(list, "group_by", group_by)
-    curse(list, "is_empty", is_empty)
-    curse(list, "size", size)
-    curse(list, "find", find)
-    curse(list, "index_of", index_of)
-    curse(list, "fold_left", fold_left)
-    curse(list, "fold_right", fold_right)
-    curse(list, "forall", forall)
-    curse(list, "head", head)
-    curse(list, "tail", tail)
-    curse(list, "take", take)
-    curse(list, "length", length)
-
-    # Parallel operations
-    curse(list, "par_map", par_map)
-    curse(list, "par_filter", par_filter)
-    curse(list, "par_filter_not", par_filter_not)
-    curse(list, "par_flat_map", par_flat_map)
-
-    # Pure operations
-    curse(list, "pure_map", pure_map)
-    curse(list, "pure_flat_map", pure_flat_map)
-    curse(list, "pure_filter", pure_filter)
-    curse(list, "pure_filter_not", pure_filter_not)
