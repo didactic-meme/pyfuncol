@@ -1,8 +1,8 @@
 from warnings import warn
 
-from pyfuncol import dict as pfcdict
-from pyfuncol import list as pfclist
-from pyfuncol import set as pfcset
+from . import dict as pfcdict
+from . import list as pfclist
+from . import set as pfcset
 
 EXTEND_BUILTINS = False
 try:
