@@ -89,7 +89,7 @@ See <https://pyfuncol.readthedocs.io/>.
 
 ## Compatibility
 
-Since it depends on [Forbidden Fruit](https://github.com/clarete/forbiddenfruit), it only works on CPython.
+For functions to be extended to builtins, [Forbidden Fruit](https://github.com/clarete/forbiddenfruit) is necessary (CPython only).
 
 ## Contributing
 
