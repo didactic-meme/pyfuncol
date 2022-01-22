@@ -26,6 +26,8 @@ A Python functional collections library. It _extends_ collections built-in types
 
 To use the methods, you just need to import pyfuncol. Some examples:
 
+**Note:** If you are not using forbiddenfruit, the functions will not automatically be extended to the builtins. Please [see here](#usage-without-forbiddenfruit) for usage without forbiddenfruit
+
 ```python
 import pyfuncol
 
@@ -69,6 +71,19 @@ pyfuncol provides operations leveraging memoization to improve performance (for 
 
 {"a": 1, "b": 2, "c": 3}.pure_flat_map(lambda kv: {kv[0]: kv[1] ** 2})
 # {"a": 1, "b": 4, "c": 9}
+```
+
+### Usage without forbiddenfruit
+
+If you are using a python intepreter other than CPython, forbiddenfruit will not work.
+
+Fortunately, pyfuncol also supports calling the functions directly without extending them.
+
+```python
+from pyfuncol import list as pfclist
+
+pfclist.map([1, 2, 3], lambda x: x * 2)
+# [2, 4, 6]
 ```
 
 ### API
