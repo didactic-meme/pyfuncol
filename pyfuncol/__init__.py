@@ -1,1 +1,1 @@
-from pyfuncol import extend_builtins
+from . import extend_builtins
