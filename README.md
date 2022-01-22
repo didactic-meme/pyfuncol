@@ -10,6 +10,7 @@
 - [pyfuncol](#pyfuncol)
   - [Installation](#installation)
   - [Usage](#usage)
+    - [Usage without forbiddenfruit](#usage-without-forbiddenfruit)
     - [API](#api)
   - [Documentation](#documentation)
   - [Compatibility](#compatibility)
@@ -77,7 +78,7 @@ pyfuncol provides operations leveraging memoization to improve performance (for 
 
 If you are using a python intepreter other than CPython, forbiddenfruit will not work.
 
-Fortunately, pyfuncol also supports calling the functions directly without extending them.
+Fortunately, pyfuncol also supports calling the functions directly without extending to builtins.
 
 ```python
 from pyfuncol import list as pfclist
@@ -104,7 +105,7 @@ See <https://pyfuncol.readthedocs.io/>.
 
 ## Compatibility
 
-For functions to be extended to builtins, [Forbidden Fruit](https://github.com/clarete/forbiddenfruit) is necessary (CPython only).
+(OPTIONAL) For functions to be extended to builtins, [Forbidden Fruit](https://github.com/clarete/forbiddenfruit) is necessary (CPython only).
 
 ## Contributing
 
