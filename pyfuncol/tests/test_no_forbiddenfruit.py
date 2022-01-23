@@ -1,4 +1,4 @@
-from pyfuncol.list import *
+from ..list import *
 import pytest
 
 my_list = [1, 2, 3]
