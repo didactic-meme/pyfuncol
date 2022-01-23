@@ -55,7 +55,7 @@ We support all subclasses with default constructors (`OrderedDict`, for example)
 
 If you are using a python intepreter other than CPython, forbiddenfruit will not work.
 
-Fortunately, if forbiddenfruit does not work on your installation or if you do not want to use it, pyfuncol also supports direct function calls without extending to builtins.
+Fortunately, if forbiddenfruit does not work on your installation or if you do not want to use it, pyfuncol also supports direct function calls without extending builtins.
 
 ```python
 from pyfuncol import list as pfclist
