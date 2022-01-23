@@ -9,7 +9,7 @@ try:
     from forbiddenfruit import curse
     EXTEND_BUILTINS = True
 except ImportError:
-    warn("[WARNING] You are using pyfuncol without forbiddenfruit. Functions will not be extended to builtins")
+    warn("[WARNING] You are using pyfuncol without forbiddenfruit. Functions will not extend builtins")
 
 
 def extend_dict():
