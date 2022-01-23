@@ -105,7 +105,7 @@ See <https://pyfuncol.readthedocs.io/>.
 
 ## Compatibility
 
-(OPTIONAL) For functions to be extended to builtins, [Forbidden Fruit](https://github.com/clarete/forbiddenfruit) is necessary (CPython only).
+For functions to be extended to builtins, [Forbidden Fruit](https://github.com/clarete/forbiddenfruit) is necessary (CPython only).
 
 ## Contributing
 
