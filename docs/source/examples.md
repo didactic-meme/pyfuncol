@@ -2,7 +2,7 @@
 
 To use the methods, you just need to import pyfuncol. Some examples:
 
-**Note:** If you are not using forbiddenfruit, the functions will not automatically be extended to the builtins. Please [see here](#usage-without-forbiddenfruit) for usage without forbiddenfruit
+**Note:** If you are not using forbiddenfruit, the functions will not automatically be extended to the builtins. Please [see here](#usage-without-forbiddenfruit) for usage without forbiddenfruit.
 
 ```python
 import pyfuncol
