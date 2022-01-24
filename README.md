@@ -10,6 +10,7 @@
 - [pyfuncol](#pyfuncol)
   - [Installation](#installation)
   - [Usage](#usage)
+    - [Usage without forbiddenfruit](#usage-without-forbiddenfruit)
     - [API](#api)
   - [Documentation](#documentation)
   - [Compatibility](#compatibility)
@@ -25,6 +26,8 @@ A Python functional collections library. It _extends_ collections built-in types
 ## Usage
 
 To use the methods, you just need to import pyfuncol. Some examples:
+
+**Note:** If you are not using forbiddenfruit, the functions will not extend the builtins. Please [see here](#usage-without-forbiddenfruit) for usage without forbiddenfruit
 
 ```python
 import pyfuncol
@@ -71,6 +74,19 @@ pyfuncol provides operations leveraging memoization to improve performance (for 
 # {"a": 1, "b": 4, "c": 9}
 ```
 
+### Usage without forbiddenfruit
+
+If you are using a python intepreter other than CPython, forbiddenfruit will not work.
+
+Fortunately, if forbiddenfruit does not work on your installation or if you do not want to use it, pyfuncol also supports direct function calls without extending builtins.
+
+```python
+from pyfuncol import list as pfclist
+
+pfclist.map([1, 2, 3], lambda x: x * 2)
+# [2, 4, 6]
+```
+
 ### API
 
 For lists, please refer to the [docs](https://pyfuncol.readthedocs.io/en/latest/pyfuncol.html#module-pyfuncol.list).
@@ -89,7 +105,7 @@ See <https://pyfuncol.readthedocs.io/>.
 
 ## Compatibility
 
-Since it depends on [Forbidden Fruit](https://github.com/clarete/forbiddenfruit), it only works on CPython.
+For functions to be extended to built-ins, [Forbidden Fruit](https://github.com/clarete/forbiddenfruit) is necessary (CPython only).
 
 ## Contributing
 
