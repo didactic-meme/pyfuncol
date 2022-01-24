@@ -5,7 +5,7 @@ setup(
     description="Functional collections extension functions for Python",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/Gondolav/pyfuncol",
+    url="https://github.com/didactic-meme/pyfuncol",
     author="Andrea Veneziano",
     author_email="andrea.veneziano@icloud.com",
     maintainer="Andrea Veneziano",
@@ -14,7 +14,7 @@ setup(
     keywords="functional pipeline data collection chain parallel",
     packages=find_packages(exclude=["contrib", "docs", "*tests*", "test"]),
     version="1.2",
-    install_requires=["forbiddenfruit"],
+    install_requires=["forbiddenfruit", "dask"],
     extras_requires={"dev": ["pytest", "pytest-cov", "myst-parser", "black", "Sphinx", "sphinx-rtd-theme"]},
     classifiers=[
         "Development Status :: 4 - Beta",

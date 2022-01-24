@@ -55,10 +55,10 @@ To publish a new release on [PyPI](https://pypi.org/project/pyfuncol/):
 
 1. Update the version in `setup.py`
 2. Update the version (`release` field) in `docs/source/conf.py`
-3. Create a new release on [GitHub](https://github.com/Gondolav/pyfuncol/releases). The newly created tag and the release title should match the version in `setup.py` and `docs/source/conf.py` with 'v' prepended. An example: for version `1.1.1`, the tag and release title should be `v1.1.1`.
+3. Create a new release on [GitHub](https://github.com/didactic-meme/pyfuncol/releases). The newly created tag and the release title should match the version in `setup.py` and `docs/source/conf.py` with 'v' prepended. An example: for version `1.1.1`, the tag and release title should be `v1.1.1`.
 
 The GitHub release creation will trigger the deploy workflow that builds and uploads the project to PyPI.
 
 ## Code of Conduct
 
-Our Code of Conduct is [here](https://github.com/Gondolav/pyfuncol/blob/main/CODE_OF_CONDUCT.md). By contributing to pyfuncol, you implicitly accept it.
+Our Code of Conduct is [here](https://github.com/didactic-meme/pyfuncol/blob/main/CODE_OF_CONDUCT.md). By contributing to pyfuncol, you implicitly accept it.

@@ -1,11 +1,11 @@
 # pyfuncol
 
-![CI](https://github.com/Gondolav/pyfuncol/actions/workflows/python-app.yml/badge.svg)
-[![codecov](https://codecov.io/gh/Gondolav/pyfuncol/branch/main/graph/badge.svg)](https://codecov.io/gh/Gondolav/pyfuncol)
+![CI](https://github.com/didactic-meme/pyfuncol/actions/workflows/python-app.yml/badge.svg)
+[![codecov](https://codecov.io/gh/didactic-meme/pyfuncol/branch/main/graph/badge.svg)](https://codecov.io/gh/didactic-meme/pyfuncol)
 ![PyPI](https://img.shields.io/pypi/v/pyfuncol?color=blue)
 [![Downloads](https://pepy.tech/badge/pyfuncol)](https://pepy.tech/project/pyfuncol)
 [![Documentation Status](https://readthedocs.org/projects/pyfuncol/badge/?version=latest)](https://pyfuncol.readthedocs.io/en/latest/?badge=latest)
-[![GitHub license](https://img.shields.io/github/license/Gondolav/pyfuncol)](https://github.com/Gondolav/pyfuncol/blob/main/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/didactic-meme/pyfuncol)](https://github.com/didactic-meme/pyfuncol/blob/main/LICENSE)
 
 - [pyfuncol](#pyfuncol)
   - [Installation](#installation)
@@ -109,8 +109,8 @@ For functions to extend built-ins, [Forbidden Fruit](https://github.com/clarete/
 
 ## Contributing
 
-See the [contributing guide](https://github.com/Gondolav/pyfuncol/blob/main/CONTRIBUTING.md) for detailed instructions on how to get started with the project.
+See the [contributing guide](https://github.com/didactic-meme/pyfuncol/blob/main/CONTRIBUTING.md) for detailed instructions on how to get started with the project.
 
 ## License
 
-pyfuncol is licensed under the [MIT license](https://github.com/Gondolav/pyfuncol/blob/main/LICENSE).
+pyfuncol is licensed under the [MIT license](https://github.com/didactic-meme/pyfuncol/blob/main/LICENSE).
