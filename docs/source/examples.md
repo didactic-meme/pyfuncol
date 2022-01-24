@@ -1,8 +1,8 @@
 # Examples
 
-To use the methods, you just need to import pyfuncol. Some examples:
+> **Note:** If you are not using forbiddenfruit, the functions will not extend the builtins. Please [see here](#usage-without-forbiddenfruit) for usage without forbiddenfruit
 
-**Note:** If you are not using forbiddenfruit, the functions will not extend the builtins. Please [see here](#usage-without-forbiddenfruit) for usage without forbiddenfruit
+To use the methods, you just need to import pyfuncol. Some examples:
 
 ```python
 import pyfuncol
@@ -51,9 +51,9 @@ pyfuncol provides operations leveraging memoization to improve performance (for 
 
 We support all subclasses with default constructors (`OrderedDict`, for example).
 
-### Usage without forbiddenfruit
+## Usage without forbiddenfruit
 
-If you are using a python intepreter other than CPython, forbiddenfruit will not work.
+If you are using a Python intepreter other than CPython, forbiddenfruit will not work.
 
 Fortunately, if forbiddenfruit does not work on your installation or if you do not want to use it, pyfuncol also supports direct function calls without extending builtins.
 
