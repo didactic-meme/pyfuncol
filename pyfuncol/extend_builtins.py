@@ -7,9 +7,12 @@ from . import set as pfcset
 EXTEND_BUILTINS = False
 try:
     from forbiddenfruit import curse
+
     EXTEND_BUILTINS = True
 except ImportError:
-    warn("[WARNING] You are using pyfuncol without forbiddenfruit. Functions will not extend builtins")
+    warn(
+        "[WARNING] You are using pyfuncol without forbiddenfruit. Functions will not extend builtins"
+    )
 
 
 def extend_dict():
@@ -42,7 +45,6 @@ def extend_dict():
     curse(dict, "pure_flat_map", pfcdict.pure_flat_map)
     curse(dict, "pure_filter", pfcdict.pure_filter)
     curse(dict, "pure_filter_not", pfcdict.pure_filter_not)
-
 
 
 def extend_list():
@@ -81,6 +83,13 @@ def extend_list():
     curse(list, "pure_flat_map", pfclist.pure_flat_map)
     curse(list, "pure_filter", pfclist.pure_filter)
     curse(list, "pure_filter_not", pfclist.pure_filter_not)
+
+    # Lazy operations
+    curse(list, "lazy_map", pfclist.lazy_map)
+    curse(list, "lazy_flat_map", pfclist.lazy_flat_map)
+    curse(list, "lazy_filter", pfclist.lazy_filter)
+    curse(list, "lazy_filter_not", pfclist.lazy_filter_not)
+    curse(list, "lazy_flatten", pfclist.lazy_flatten)
 
 
 def extend_set():
@@ -138,6 +147,7 @@ def extend_set():
     curse(frozenset, "pure_flat_map", pfcset.pure_flat_map)
     curse(frozenset, "pure_filter", pfcset.pure_filter)
     curse(frozenset, "pure_filter_not", pfcset.pure_filter_not)
+
 
 if EXTEND_BUILTINS:
     extend_dict()

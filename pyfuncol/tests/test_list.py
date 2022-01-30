@@ -235,3 +235,36 @@ def test_pure_filter_not():
 
     # Test that type is preserved
     assert lst.pure_filter_not(lambda x: x >= 2) == [1]
+
+
+# Lazy operations
+
+
+def test_lazy_map():
+    res = l.lazy_map(lambda x: x * 2)
+    assert next(res) == 2
+    assert list(res) == [4, 6]
+
+
+def test_lazy_flat_map():
+    res = l.lazy_flat_map(lambda x: [x * 2])
+    assert next(res) == 2
+    assert list(res) == [4, 6]
+
+
+def test_lazy_filter():
+    res = l.lazy_filter(lambda x: x >= 2)
+    assert next(res) == 2
+    assert list(res) == [3]
+
+
+def test_lazy_filter_not():
+    res = l.lazy_filter_not(lambda x: x < 2)
+    assert next(res) == 2
+    assert list(res) == [3]
+
+
+def test_lazy_flatten():
+    res = [[1, 2], [3]].lazy_flatten()
+    assert next(res) == 1
+    assert list(res) == [2, 3]
