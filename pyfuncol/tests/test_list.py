@@ -268,3 +268,26 @@ def test_lazy_flatten():
     res = [[1, 2], [3]].lazy_flatten()
     assert next(res) == 1
     assert list(res) == [2, 3]
+
+
+def test_lazy_distinct():
+    res = [1, 1, 2, 2, 3].lazy_distinct()
+    assert next(res) == 1
+    assert list(res) == [2, 3]
+
+
+def test_lazy_take_neg():
+    a = l.lazy_take(-1)
+    assert list(a) == []
+
+
+def test_lazy_take_greater_len():
+    a = l.lazy_take(4)
+    assert next(a) == l[0]
+    assert list(a) == l[1:]
+
+
+def test_lazy_take_smaller_len():
+    a = l.lazy_take(2)
+    assert next(a) == 1
+    assert list(a) == [2]

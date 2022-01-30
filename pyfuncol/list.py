@@ -488,3 +488,36 @@ def lazy_flatten(self: List[A]) -> Iterator[B]:
     iter = (y for x in self for y in x)
     for x in iter:
         yield x
+
+
+def lazy_distinct(self: List[A]) -> Iterator[A]:
+    """
+    Selects all the elements of this list ignoring the duplicates, lazily.
+
+    Returns:
+        The lazy list without duplicates, as an iterator.
+    """
+    for x in set(self):
+        yield x
+
+
+def lazy_take(self: List[A], n: int) -> Iterator[A]:
+    """
+    Selects the first n elements, lazily.
+
+    Args:
+        n: The number of elements to take from this list.
+
+    Returns:
+        A lazy list (as an iterator) consisting only of the first n elements of this list,
+        or else the whole lazy list, if it has less than n elements.
+        If n is negative, returns an empty lazy list.
+    """
+    if n < 0:
+        yield from ()
+    if len(self) <= n:
+        for x in self:
+            yield x
+    else:
+        for i in range(n):
+            yield self[i]

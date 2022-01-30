@@ -90,6 +90,8 @@ def extend_list():
     curse(list, "lazy_filter", pfclist.lazy_filter)
     curse(list, "lazy_filter_not", pfclist.lazy_filter_not)
     curse(list, "lazy_flatten", pfclist.lazy_flatten)
+    curse(list, "lazy_distinct", pfclist.lazy_distinct)
+    curse(list, "lazy_take", pfclist.lazy_take)
 
 
 def extend_set():
