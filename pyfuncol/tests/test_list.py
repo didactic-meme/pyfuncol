@@ -175,6 +175,12 @@ def test_length_equal_size():
     assert l.size() == l.length()
 
 
+def test_to_iterator():
+    it = l.to_iterator()
+    assert next(it) == l[0]
+    assert list(it) == l[1:]
+
+
 # Parallel operations
 
 

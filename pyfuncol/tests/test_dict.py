@@ -61,6 +61,12 @@ def test_to_list():
     assert d.to_list() == [("a", 1), ("b", 2), ("c", 3)]
 
 
+def test_to_iterator():
+    it = d.to_iterator()
+    assert next(it) == ("a", 1)
+    assert list(it) == [("b", 2), ("c", 3)]
+
+
 def test_count():
     assert d.count(lambda kv: (kv[0] == "a" or kv[0] == "b") and kv[1] <= 3) == 2
 
@@ -149,3 +155,30 @@ def test_pure_filter_not():
 
     # Test that type is preserved
     assert d.pure_filter_not(lambda kv: kv[1] > 1) == {"a": 1}
+
+
+# Lazy operations
+
+
+def test_lazy_flat_map():
+    res = d.lazy_flat_map(lambda kv: {kv[0]: kv[1] ** 2})
+    assert next(res) == ("a", 1)
+    assert list(res) == [("b", 4), ("c", 9)]
+
+
+def test_lazy_map():
+    res = d.lazy_map(lambda kv: (kv[0], kv[1] ** 2))
+    assert next(res) == ("a", 1)
+    assert list(res) == [("b", 4), ("c", 9)]
+
+
+def test_lazy_filter():
+    res = d.lazy_filter(lambda kv: kv[1] > 1)
+    assert next(res) == ("b", 2)
+    assert list(res) == [("c", 3)]
+
+
+def test_lazy_filter_not():
+    res = d.lazy_filter_not(lambda kv: kv[1] <= 1)
+    assert next(res) == ("b", 2)
+    assert list(res) == [("c", 3)]

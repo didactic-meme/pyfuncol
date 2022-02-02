@@ -285,6 +285,16 @@ def length(self: List[A]) -> int:
     return len(self)
 
 
+def to_iterator(self: List[A]) -> Iterator[A]:
+    """
+    Converts this list to an iterator.
+
+    Returns:
+        An iterator
+    """
+    return (x for x in self)
+
+
 # Parallel operations
 
 

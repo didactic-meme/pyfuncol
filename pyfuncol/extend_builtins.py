@@ -28,6 +28,7 @@ def extend_dict():
     curse(dict, "is_empty", pfcdict.is_empty)
     curse(dict, "map", pfcdict.map)
     curse(dict, "to_list", pfcdict.to_list)
+    curse(dict, "to_iterator", pfcdict.to_iterator)
     curse(dict, "count", pfcdict.count)
     curse(dict, "fold_left", pfcdict.fold_left)
     curse(dict, "fold_right", pfcdict.fold_right)
@@ -45,6 +46,12 @@ def extend_dict():
     curse(dict, "pure_flat_map", pfcdict.pure_flat_map)
     curse(dict, "pure_filter", pfcdict.pure_filter)
     curse(dict, "pure_filter_not", pfcdict.pure_filter_not)
+
+    # Lazy operations
+    curse(dict, "lazy_map", pfcdict.lazy_map)
+    curse(dict, "lazy_flat_map", pfcdict.lazy_flat_map)
+    curse(dict, "lazy_filter", pfcdict.lazy_filter)
+    curse(dict, "lazy_filter_not", pfcdict.lazy_filter_not)
 
 
 def extend_list():
@@ -71,6 +78,7 @@ def extend_list():
     curse(list, "tail", pfclist.tail)
     curse(list, "take", pfclist.take)
     curse(list, "length", pfclist.length)
+    curse(list, "to_iterator", pfclist.to_iterator)
 
     # Parallel operations
     curse(list, "par_map", pfclist.par_map)
