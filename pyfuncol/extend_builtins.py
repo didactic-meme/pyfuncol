@@ -120,6 +120,7 @@ def extend_set():
     curse(set, "fold_right", pfcset.fold_right)
     curse(set, "forall", pfcset.forall)
     curse(set, "length", pfcset.length)
+    curse(set, "to_iterator", pfcset.to_iterator)
 
     curse(frozenset, "map", pfcset.map)
     curse(frozenset, "filter", pfcset.filter)
@@ -135,6 +136,7 @@ def extend_set():
     curse(frozenset, "fold_right", pfcset.fold_right)
     curse(frozenset, "forall", pfcset.forall)
     curse(frozenset, "length", pfcset.length)
+    curse(frozenset, "to_iterator", pfcset.to_iterator)
 
     # Parallel operations
     curse(set, "par_map", pfcset.par_map)
@@ -157,6 +159,17 @@ def extend_set():
     curse(frozenset, "pure_flat_map", pfcset.pure_flat_map)
     curse(frozenset, "pure_filter", pfcset.pure_filter)
     curse(frozenset, "pure_filter_not", pfcset.pure_filter_not)
+
+    # Lazy operations
+    curse(set, "lazy_map", pfcset.lazy_map)
+    curse(set, "lazy_flat_map", pfcset.lazy_flat_map)
+    curse(set, "lazy_filter", pfcset.lazy_filter)
+    curse(set, "lazy_filter_not", pfcset.lazy_filter_not)
+
+    curse(frozenset, "lazy_map", pfcset.lazy_map)
+    curse(frozenset, "lazy_flat_map", pfcset.lazy_flat_map)
+    curse(frozenset, "lazy_filter", pfcset.lazy_filter)
+    curse(frozenset, "lazy_filter_not", pfcset.lazy_filter_not)
 
 
 if EXTEND_BUILTINS:
