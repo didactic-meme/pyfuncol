@@ -64,6 +64,7 @@ list({"a": 1, "b": 2, "c": 3}.lazy_flat_map(lambda kv: {kv[0]: kv[1] ** 2}))
 
 We support all subclasses with default constructors (`OrderedDict`, for example).
 
+(usage-without-forbiddenfruit)=
 ## Usage without forbiddenfruit
 
 If you are using a Python intepreter other than CPython, forbiddenfruit will not work.

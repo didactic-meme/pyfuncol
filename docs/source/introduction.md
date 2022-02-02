@@ -9,4 +9,4 @@ pyfuncol provides:
 - Pure methods that leverage memoization to improve performance, such as `pure_map`, `pure_flat_map`, etc.
 - Lazy methods that return iterators and never materialize results, such as `lazy_map`, `lazy_flat_map`, etc.
 
-pyfuncol can also be [used without forbiddenfruit](examples.md#usage-without-forbiddenfruit).
+pyfuncol can also be [used without forbiddenfruit](usage-without-forbiddenfruit).
