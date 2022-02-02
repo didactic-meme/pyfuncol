@@ -49,6 +49,19 @@ pyfuncol provides operations leveraging memoization to improve performance (for 
 # {"a": 1, "b": 4, "c": 9}
 ```
 
+pyfuncol provides lazy operations that never materialize results:
+
+```python
+list([1, 2, 3, 4].lazy_map(lambda x: x * 2).lazy_filter(lambda x: x > 4))
+# [6, 8]
+
+list({1, 2, 3, 4}.lazy_map(lambda x: x * 2).lazy_filter_not(lambda x: x <= 4))
+# [6, 8]
+
+list({"a": 1, "b": 2, "c": 3}.lazy_flat_map(lambda kv: {kv[0]: kv[1] ** 2}))
+# [("a", 1), ("b", 4), ("c", 9)]
+```
+
 We support all subclasses with default constructors (`OrderedDict`, for example).
 
 ## Usage without forbiddenfruit

@@ -19,6 +19,15 @@
 
 A Python functional collections library. It _extends_ collections built-in types with useful methods to write functional Python code. It uses [Forbidden Fruit](https://github.com/clarete/forbiddenfruit) under the hood.
 
+pyfuncol provides:
+
+- Standard "eager" methods, such as `map`, `flat_map`, `group_by`, etc.
+- Parallel methods, such as `par_map`, `par_flat_map`, etc.
+- Pure methods that leverage memoization to improve performance, such as `pure_map`, `pure_flat_map`, etc.
+- Lazy methods that return iterators and never materialize results, such as `lazy_map`, `lazy_flat_map`, etc.
+
+pyfuncol can also be [used without forbiddenfruit](#usage-without-forbiddenfruit).
+
 ## Installation
 
 `pip install pyfuncol`
@@ -74,9 +83,22 @@ pyfuncol provides operations leveraging memoization to improve performance (for 
 # {"a": 1, "b": 4, "c": 9}
 ```
 
+pyfuncol provides lazy operations that never materialize results:
+
+```python
+list([1, 2, 3, 4].lazy_map(lambda x: x * 2).lazy_filter(lambda x: x > 4))
+# [6, 8]
+
+list({1, 2, 3, 4}.lazy_map(lambda x: x * 2).lazy_filter_not(lambda x: x <= 4))
+# [6, 8]
+
+list({"a": 1, "b": 2, "c": 3}.lazy_flat_map(lambda kv: {kv[0]: kv[1] ** 2}))
+# [("a", 1), ("b", 4), ("c", 9)]
+```
+
 ### Usage without forbiddenfruit
 
-If you are using a Python intepreter other than CPython, forbiddenfruit will not work.
+If you are using a Python interpreter other than CPython, forbiddenfruit will not work.
 
 Fortunately, if forbiddenfruit does not work on your installation or if you do not want to use it, pyfuncol also supports direct function calls without extending builtins.
 
