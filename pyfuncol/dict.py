@@ -393,13 +393,13 @@ def lazy_map(
     self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]
 ) -> Iterator[Tuple[C, D]]:
     """
-    Builds a new dict by applying a function to all elements of this dict, lazily.
+    Builds a new list of tuples by applying a function to all elements of this dict, lazily.
 
     Args:
         f: The function to apply to all elements.
 
     Returns:
-        The new lazy dict, as an iterator of tuples.
+        The new lazy list of tuples, as an iterator.
     """
     for x in self.items():
         yield f(x)
@@ -409,13 +409,13 @@ def lazy_flat_map(
     self: Dict[A, B], f: Callable[[Tuple[A, B]], Dict[C, D]]
 ) -> Iterator[Tuple[C, D]]:
     """
-    Builds a new dict by applying a function to all elements of this dict and using the elements of the resulting collections, lazily.
+    Builds a new list of tuples by applying a function to all elements of this dict and using the elements of the resulting collections, lazily.
 
     Args:
         f: The function to apply to all elements.
 
     Returns:
-        The new lazy dict, as an iterator of tuples.
+        The new lazy list of tuples, as an iterator.
     """
     return (y for x in self.items() for y in f(x).items())
 
@@ -430,7 +430,7 @@ def lazy_filter(
         p: The predicate to satisfy.
 
     Returns:
-        The filtered lazy dict, as an iterator of tuples.
+        The filtered lazy list of tuples, as an iterator.
     """
     for x in self.items():
         if p(x):
@@ -447,7 +447,7 @@ def lazy_filter_not(
         p: The predicate to not satisfy.
 
     Returns:
-        The filtered lazy dict, as an iterator of tuples.
+        The filtered lazy list of tuples, as an iterator.
     """
     for x in self.items():
         if not p(x):
