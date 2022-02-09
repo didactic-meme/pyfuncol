@@ -417,9 +417,7 @@ def lazy_flat_map(
     Returns:
         The new lazy dict, as an iterator of tuples.
     """
-    transformed = (y for x in self.items() for y in f(x).items())
-    for x in transformed:
-        yield x
+    return (y for x in self.items() for y in f(x).items())
 
 
 def lazy_filter(

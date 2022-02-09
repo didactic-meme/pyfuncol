@@ -483,9 +483,7 @@ def lazy_flat_map(self: List[A], f: Callable[[A], List[B]]) -> Iterator[B]:
     Returns:
         The new lazy list, as an iterator.
     """
-    transformed = (y for x in self for y in f(x))
-    for x in transformed:
-        yield x
+    return (y for x in self for y in f(x))
 
 
 def lazy_flatten(self: List[A]) -> Iterator[B]:
@@ -495,9 +493,7 @@ def lazy_flatten(self: List[A]) -> Iterator[B]:
     Returns:
         The flattened lazy list, as an iterator.
     """
-    iter = (y for x in self for y in x)
-    for x in iter:
-        yield x
+    return (y for x in self for y in x)
 
 
 def lazy_distinct(self: List[A]) -> Iterator[A]:
