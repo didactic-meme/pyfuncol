@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Callable, Dict, Optional, TypeVar, Set, cast
+from typing import Callable, Dict, Optional, TypeVar, Set, cast, Iterator
 import functools
 import dask
 
@@ -209,6 +209,15 @@ def length(self: Set[A]) -> int:
     return len(self)
 
 
+def to_iterator(self: Set[A]) -> Iterator[A]:
+    """
+    Converts this set to an iterator.
+
+    Returns:
+        An iterator
+    """
+    return (x for x in self)
+
 # Parallel operations
 
 
@@ -341,3 +350,60 @@ def pure_filter_not(self: Set[A], p: Callable[[A], bool]) -> Set[A]:
     """
     p_cache = functools.cache(p)
     return type(self)(x for x in self if not p_cache(x))
+
+
+def lazy_map(self: Set[A], f: Callable[[A], B]) -> Iterator[B]:
+    """
+    Builds a new set by applying a function to all elements of this set, lazily.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new lazy set, as an iterator.
+    """
+    for x in self:
+        yield f(x)
+
+
+def lazy_filter(self: Set[A], p: Callable[[A], bool]) -> Iterator[A]:
+    """
+    Selects all elements of this set which satisfy a predicate, lazily.
+
+    Args:
+        p: The predicate to satisfy.
+
+    Returns:
+        The filtered lazy set, as an iterator.
+    """
+    for x in self:
+        if p(x):
+            yield x
+
+
+def lazy_filter_not(self: Set[A], p: Callable[[A], bool]) -> Iterator[A]:
+    """
+    Selects all elements of this set which do not satisfy a predicate, lazily.
+
+    Args:
+        p: The predicate to not satisfy.
+
+    Returns:
+        The filtered lazy set, as an iterator.
+    """
+    for x in self:
+        if not p(x):
+            yield x
+
+
+def lazy_flat_map(self: Set[A], f: Callable[[A], Set[B]]) -> Iterator[B]:
+    """
+    Builds a new lazy set by applying a function to all elements of this set and using the elements of the resulting collections.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new lazy set, as an iterator.
+    """
+    return (y for x in self for y in f(x))

@@ -73,7 +73,7 @@ html_static_path = ["_static"]
 
 html_context = {
   'display_github': True,
-  'github_user': 'Gondolav',
+  'github_user': 'didactic-meme',
   'github_repo': 'pyfuncol',
   'github_version': 'main/docs/',
 }

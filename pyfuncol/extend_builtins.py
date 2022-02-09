@@ -7,9 +7,12 @@ from . import set as pfcset
 EXTEND_BUILTINS = False
 try:
     from forbiddenfruit import curse
+
     EXTEND_BUILTINS = True
 except ImportError:
-    warn("[WARNING] You are using pyfuncol without forbiddenfruit. Functions will not extend builtins")
+    warn(
+        "[WARNING] You are using pyfuncol without forbiddenfruit. Functions will not extend builtins"
+    )
 
 
 def extend_dict():
@@ -25,6 +28,7 @@ def extend_dict():
     curse(dict, "is_empty", pfcdict.is_empty)
     curse(dict, "map", pfcdict.map)
     curse(dict, "to_list", pfcdict.to_list)
+    curse(dict, "to_iterator", pfcdict.to_iterator)
     curse(dict, "count", pfcdict.count)
     curse(dict, "fold_left", pfcdict.fold_left)
     curse(dict, "fold_right", pfcdict.fold_right)
@@ -43,6 +47,11 @@ def extend_dict():
     curse(dict, "pure_filter", pfcdict.pure_filter)
     curse(dict, "pure_filter_not", pfcdict.pure_filter_not)
 
+    # Lazy operations
+    curse(dict, "lazy_map", pfcdict.lazy_map)
+    curse(dict, "lazy_flat_map", pfcdict.lazy_flat_map)
+    curse(dict, "lazy_filter", pfcdict.lazy_filter)
+    curse(dict, "lazy_filter_not", pfcdict.lazy_filter_not)
 
 
 def extend_list():
@@ -69,6 +78,7 @@ def extend_list():
     curse(list, "tail", pfclist.tail)
     curse(list, "take", pfclist.take)
     curse(list, "length", pfclist.length)
+    curse(list, "to_iterator", pfclist.to_iterator)
 
     # Parallel operations
     curse(list, "par_map", pfclist.par_map)
@@ -81,6 +91,15 @@ def extend_list():
     curse(list, "pure_flat_map", pfclist.pure_flat_map)
     curse(list, "pure_filter", pfclist.pure_filter)
     curse(list, "pure_filter_not", pfclist.pure_filter_not)
+
+    # Lazy operations
+    curse(list, "lazy_map", pfclist.lazy_map)
+    curse(list, "lazy_flat_map", pfclist.lazy_flat_map)
+    curse(list, "lazy_filter", pfclist.lazy_filter)
+    curse(list, "lazy_filter_not", pfclist.lazy_filter_not)
+    curse(list, "lazy_flatten", pfclist.lazy_flatten)
+    curse(list, "lazy_distinct", pfclist.lazy_distinct)
+    curse(list, "lazy_take", pfclist.lazy_take)
 
 
 def extend_set():
@@ -101,6 +120,7 @@ def extend_set():
     curse(set, "fold_right", pfcset.fold_right)
     curse(set, "forall", pfcset.forall)
     curse(set, "length", pfcset.length)
+    curse(set, "to_iterator", pfcset.to_iterator)
 
     curse(frozenset, "map", pfcset.map)
     curse(frozenset, "filter", pfcset.filter)
@@ -116,6 +136,7 @@ def extend_set():
     curse(frozenset, "fold_right", pfcset.fold_right)
     curse(frozenset, "forall", pfcset.forall)
     curse(frozenset, "length", pfcset.length)
+    curse(frozenset, "to_iterator", pfcset.to_iterator)
 
     # Parallel operations
     curse(set, "par_map", pfcset.par_map)
@@ -138,6 +159,18 @@ def extend_set():
     curse(frozenset, "pure_flat_map", pfcset.pure_flat_map)
     curse(frozenset, "pure_filter", pfcset.pure_filter)
     curse(frozenset, "pure_filter_not", pfcset.pure_filter_not)
+
+    # Lazy operations
+    curse(set, "lazy_map", pfcset.lazy_map)
+    curse(set, "lazy_flat_map", pfcset.lazy_flat_map)
+    curse(set, "lazy_filter", pfcset.lazy_filter)
+    curse(set, "lazy_filter_not", pfcset.lazy_filter_not)
+
+    curse(frozenset, "lazy_map", pfcset.lazy_map)
+    curse(frozenset, "lazy_flat_map", pfcset.lazy_flat_map)
+    curse(frozenset, "lazy_filter", pfcset.lazy_filter)
+    curse(frozenset, "lazy_filter_not", pfcset.lazy_filter_not)
+
 
 if EXTEND_BUILTINS:
     extend_dict()

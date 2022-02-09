@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Callable, Dict, Optional, TypeVar, List, cast
+from typing import Callable, Dict, Iterator, Optional, TypeVar, List, cast
 import functools
 import dask
 
@@ -285,6 +285,16 @@ def length(self: List[A]) -> int:
     return len(self)
 
 
+def to_iterator(self: List[A]) -> Iterator[A]:
+    """
+    Converts this list to an iterator.
+
+    Returns:
+        An iterator
+    """
+    return (x for x in self)
+
+
 # Parallel operations
 
 
@@ -417,3 +427,103 @@ def pure_filter_not(self: List[A], p: Callable[[A], bool]) -> List[A]:
     """
     p_cache = functools.cache(p)
     return type(self)(x for x in self if not p_cache(x))
+
+
+def lazy_map(self: List[A], f: Callable[[A], B]) -> Iterator[B]:
+    """
+    Builds a new list by applying a function to all elements of this list, lazily.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new lazy list, as an iterator.
+    """
+    for x in self:
+        yield f(x)
+
+
+def lazy_filter(self: List[A], p: Callable[[A], bool]) -> Iterator[A]:
+    """
+    Selects all elements of this list which satisfy a predicate, lazily.
+
+    Args:
+        p: The predicate to satisfy.
+
+    Returns:
+        The filtered lazy list, as an iterator.
+    """
+    for x in self:
+        if p(x):
+            yield x
+
+
+def lazy_filter_not(self: List[A], p: Callable[[A], bool]) -> Iterator[A]:
+    """
+    Selects all elements of this list which do not satisfy a predicate, lazily.
+
+    Args:
+        p: The predicate to not satisfy.
+
+    Returns:
+        The filtered lazy list, as an iterator.
+    """
+    for x in self:
+        if not p(x):
+            yield x
+
+
+def lazy_flat_map(self: List[A], f: Callable[[A], List[B]]) -> Iterator[B]:
+    """
+    Builds a new lazy list by applying a function to all elements of this list and using the elements of the resulting collections.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new lazy list, as an iterator.
+    """
+    return (y for x in self for y in f(x))
+
+
+def lazy_flatten(self: List[A]) -> Iterator[B]:
+    """
+    Converts this list of lists into a lazy list formed by the elements of these lists.
+
+    Returns:
+        The flattened lazy list, as an iterator.
+    """
+    return (y for x in self for y in x)
+
+
+def lazy_distinct(self: List[A]) -> Iterator[A]:
+    """
+    Selects all the elements of this list ignoring the duplicates, lazily.
+
+    Returns:
+        The lazy list without duplicates, as an iterator.
+    """
+    for x in set(self):
+        yield x
+
+
+def lazy_take(self: List[A], n: int) -> Iterator[A]:
+    """
+    Selects the first n elements, lazily.
+
+    Args:
+        n: The number of elements to take from this list.
+
+    Returns:
+        A lazy list (as an iterator) consisting only of the first n elements of this list,
+        or else the whole lazy list, if it has less than n elements.
+        If n is negative, returns an empty lazy list.
+    """
+    if n < 0:
+        yield from ()
+    if len(self) <= n:
+        for x in self:
+            yield x
+    else:
+        for i in range(n):
+            yield self[i]

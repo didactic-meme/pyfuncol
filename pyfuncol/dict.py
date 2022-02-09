@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Optional, Tuple, TypeVar, List, cast
+from typing import Callable, Dict, Iterator, Optional, Tuple, TypeVar, List, cast
 import functools
 import dask
 
@@ -117,6 +117,16 @@ def to_list(self: Dict[A, B]) -> List[Tuple[A, B]]:
         A list of pairs corresponding to the entries of the dict
     """
     return [(k, v) for k, v in self.items()]
+
+
+def to_iterator(self: Dict[A, B]) -> Iterator[Tuple[A, B]]:
+    """
+    Converts this dict to an iterator of (key, value) pairs.
+
+    Returns:
+        An iterator of pairs corresponding to the entries of the dict
+    """
+    return ((k, v) for k, v in self.items())
 
 
 def count(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> int:
@@ -374,3 +384,71 @@ def pure_filter_not(self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]) -> Dict[
     """
     p_cache = functools.cache(p)
     return type(self)({k: v for k, v in self.items() if not p_cache((k, v))})
+
+
+# Lazy operations
+
+
+def lazy_map(
+    self: Dict[A, B], f: Callable[[Tuple[A, B]], Tuple[C, D]]
+) -> Iterator[Tuple[C, D]]:
+    """
+    Builds a new list of tuples by applying a function to all elements of this dict, lazily.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new lazy list of tuples, as an iterator.
+    """
+    for x in self.items():
+        yield f(x)
+
+
+def lazy_flat_map(
+    self: Dict[A, B], f: Callable[[Tuple[A, B]], Dict[C, D]]
+) -> Iterator[Tuple[C, D]]:
+    """
+    Builds a new list of tuples by applying a function to all elements of this dict and using the elements of the resulting collections, lazily.
+
+    Args:
+        f: The function to apply to all elements.
+
+    Returns:
+        The new lazy list of tuples, as an iterator.
+    """
+    return (y for x in self.items() for y in f(x).items())
+
+
+def lazy_filter(
+    self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]
+) -> Iterator[Tuple[A, B]]:
+    """
+    Selects all elements of this dict which satisfy a predicate, lazily.
+
+    Args:
+        p: The predicate to satisfy.
+
+    Returns:
+        The filtered lazy list of tuples, as an iterator.
+    """
+    for x in self.items():
+        if p(x):
+            yield x
+
+
+def lazy_filter_not(
+    self: Dict[A, B], p: Callable[[Tuple[A, B]], bool]
+) -> Iterator[Tuple[A, B]]:
+    """
+    Selects all elements of this dict which do not satisfy a predicate, lazily.
+
+    Args:
+        p: The predicate to not satisfy.
+
+    Returns:
+        The filtered lazy list of tuples, as an iterator.
+    """
+    for x in self.items():
+        if not p(x):
+            yield x
