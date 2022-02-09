@@ -175,6 +175,12 @@ def test_length_equal_size():
     assert l.size() == l.length()
 
 
+def test_to_iterator():
+    it = l.to_iterator()
+    assert next(it) == l[0]
+    assert list(it) == l[1:]
+
+
 # Parallel operations
 
 
@@ -235,3 +241,59 @@ def test_pure_filter_not():
 
     # Test that type is preserved
     assert lst.pure_filter_not(lambda x: x >= 2) == [1]
+
+
+# Lazy operations
+
+
+def test_lazy_map():
+    res = l.lazy_map(lambda x: x * 2)
+    assert next(res) == 2
+    assert list(res) == [4, 6]
+
+
+def test_lazy_flat_map():
+    res = l.lazy_flat_map(lambda x: [x * 2])
+    assert next(res) == 2
+    assert list(res) == [4, 6]
+
+
+def test_lazy_filter():
+    res = l.lazy_filter(lambda x: x >= 2)
+    assert next(res) == 2
+    assert list(res) == [3]
+
+
+def test_lazy_filter_not():
+    res = l.lazy_filter_not(lambda x: x < 2)
+    assert next(res) == 2
+    assert list(res) == [3]
+
+
+def test_lazy_flatten():
+    res = [[1, 2], [3]].lazy_flatten()
+    assert next(res) == 1
+    assert list(res) == [2, 3]
+
+
+def test_lazy_distinct():
+    res = [1, 1, 2, 2, 3].lazy_distinct()
+    assert next(res) == 1
+    assert list(res) == [2, 3]
+
+
+def test_lazy_take_neg():
+    a = l.lazy_take(-1)
+    assert list(a) == []
+
+
+def test_lazy_take_greater_len():
+    a = l.lazy_take(4)
+    assert next(a) == l[0]
+    assert list(a) == l[1:]
+
+
+def test_lazy_take_smaller_len():
+    a = l.lazy_take(2)
+    assert next(a) == 1
+    assert list(a) == [2]
