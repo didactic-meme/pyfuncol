@@ -24,7 +24,7 @@ author = "Andrea Veneziano"
 description = "Functional collections extension functions for Python"
 
 # The full version, including alpha/beta/rc tags
-release = "1.3.0"
+release = "1.3.1"
 
 
 # -- General configuration ---------------------------------------------------
@@ -37,7 +37,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.autosectionlabel",
-    "sphinx.ext.viewcode"
+    "sphinx.ext.viewcode",
 ]
 
 autodoc_typehints = "signature"
@@ -72,8 +72,8 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 
 html_context = {
-  'display_github': True,
-  'github_user': 'didactic-meme',
-  'github_repo': 'pyfuncol',
-  'github_version': 'main/docs/',
+    "display_github": True,
+    "github_user": "didactic-meme",
+    "github_repo": "pyfuncol",
+    "github_version": "main/docs/",
 }

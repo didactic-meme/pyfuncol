@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyfuncol.list &mdash; pyfuncol 1.3.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> pyfuncol
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../get_started.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyfuncol</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>pyfuncol.list</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyfuncol.list</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">dask</span>
+
+<span class="n">A</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
+<span class="n">K</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;K&quot;</span><span class="p">)</span>
+<span class="n">U</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;U&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="map"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.map">[docs]</a><span class="k">def</span> <span class="nf">map</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="n">B</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Builds a new list by applying a function to all elements of this list.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f: The function to apply to all elements.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The new list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="filter"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.filter">[docs]</a><span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">p</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects all elements of this list which satisfy a predicate.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p: The predicate to satisfy.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The filtered list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">p</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="filter_not"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.filter_not">[docs]</a><span class="k">def</span> <span class="nf">filter_not</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">p</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects all elements of this list which do not satisfy a predicate.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p: The predicate to not satisfy.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The filtered list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="flat_map"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.flat_map">[docs]</a><span class="k">def</span> <span class="nf">flat_map</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Builds a new list by applying a function to all elements of this list and using the elements of the resulting collections.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f: The function to apply to all elements.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The new list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="flatten"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.flatten">[docs]</a><span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts this list of lists into a list formed by the elements of these lists.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The flattened list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="contains"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.contains">[docs]</a><span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">elem</span><span class="p">:</span> <span class="n">A</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests whether this list contains a given value as element.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        elem: The element to look for.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if the list contains the element, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">elem</span> <span class="ow">in</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="distinct"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.distinct">[docs]</a><span class="k">def</span> <span class="nf">distinct</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects all the elements of this list ignoring the duplicates.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The list without duplicates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)((</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="foreach"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.foreach">[docs]</a><span class="k">def</span> <span class="nf">foreach</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="n">U</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply f to each element for its side effects.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f: The function to apply to all elements for its side effects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+        <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="group_by"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.group_by">[docs]</a><span class="k">def</span> <span class="nf">group_by</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="n">K</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Partitions this list into a dict of lists according to some discriminator function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f: The grouping function.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A dictionary where elements are grouped according to the grouping function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_empty"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.is_empty">[docs]</a><span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests whether the list is empty.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if the list is empty, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="size"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.size">[docs]</a><span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the size of this list.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The size of the list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="find"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.find">[docs]</a><span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">p</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">A</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds the first element of the list satisfying a predicate, if any.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p: The predicate to satisfy.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The first element satisfying the predicate, otherwise None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">p</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">x</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="index_of"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.index_of">[docs]</a><span class="k">def</span> <span class="nf">index_of</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">elem</span><span class="p">:</span> <span class="n">A</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds index of first occurrence of some value in this list. Returns -1 if none exists.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        elem: The element whose index is to find.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The index of the first occurrence of the element, or -1 if it does not exists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">elem</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="fold_left"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.fold_left">[docs]</a><span class="k">def</span> <span class="nf">fold_left</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">z</span><span class="p">:</span> <span class="n">B</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">B</span><span class="p">,</span> <span class="n">A</span><span class="p">],</span> <span class="n">B</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">B</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applies a binary operator to a start value and all elements of this sequence, going left to right.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        z: The start value.</span>
+<span class="sd">        op: The binary operation.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The result of inserting op between consecutive elements of this sequence, going left to right with the start value z on the left:</span>
+<span class="sd">        op(...op(z, x_1), x_2, ..., x_n)</span>
+<span class="sd">        where x1, ..., xn are the elements of this sequence. Returns z if this sequence is empty.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">z</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">acc</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">acc</span></div>
+
+
+<div class="viewcode-block" id="fold_right"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.fold_right">[docs]</a><span class="k">def</span> <span class="nf">fold_right</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">z</span><span class="p">:</span> <span class="n">B</span><span class="p">,</span> <span class="n">op</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">],</span> <span class="n">B</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">B</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applies a binary operator to all elements of this list and a start value, going right to left.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        z: The start value.</span>
+<span class="sd">        op: The binary operation.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The result of inserting op between consecutive elements of this list, going right to left with the start value z on the right:</span>
+<span class="sd">        op(x_1, op(x_2, ... op(x_n, z)...))</span>
+<span class="sd">        where x1, ..., xn are the elements of this list. Returns z if this list is empty.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">z</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">acc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">acc</span></div>
+
+
+<div class="viewcode-block" id="forall"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.forall">[docs]</a><span class="k">def</span> <span class="nf">forall</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">p</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tests whether a predicate holds for all elements of this list.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p: The predicate used to test elements.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        True if this list is empty or the given predicate p holds for all elements of this list, otherwise False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="head"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.head">[docs]</a><span class="k">def</span> <span class="nf">head</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">A</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects the first element of this iterable collection.</span>
+
+<span class="sd">    Note: might return different results for different runs, unless the underlying collection type is ordered.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        IndexError: If the iterable collection is empty.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">()</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="tail"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.tail">[docs]</a><span class="k">def</span> <span class="nf">tail</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The rest of the collection without its first element.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        IndexError: If the iterable collection is empty.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">()</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span></div>
+
+
+<div class="viewcode-block" id="take"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.take">[docs]</a><span class="k">def</span> <span class="nf">take</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects the first n elements.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        n: The number of elements to take from this list.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list consisting only of the first n elements of this list, or else the whole list, if it has less than n elements. If n is negative, returns an empty list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="length"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.length">[docs]</a><span class="k">def</span> <span class="nf">length</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the length (number of elements) of the list. `size` is an alias for length.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The length of the list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="to_iterator"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.to_iterator">[docs]</a><span class="k">def</span> <span class="nf">to_iterator</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">A</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts this list to an iterator.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An iterator</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span></div>
+
+
+<span class="c1"># Parallel operations</span>
+
+
+<div class="viewcode-block" id="par_map"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.par_map">[docs]</a><span class="k">def</span> <span class="nf">par_map</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="n">B</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Builds a new list by applying a function in parallel to all elements of this list.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f: The function to apply to all elements.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The new list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)((</span><span class="n">dask</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">dask</span><span class="o">.</span><span class="n">delayed</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">))))</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="par_filter"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.par_filter">[docs]</a><span class="k">def</span> <span class="nf">par_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">p</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects in parallel all elements of this list which satisfy a predicate.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p: The predicate to satisfy.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The filtered list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">preds</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">dask</span><span class="o">.</span><span class="n">delayed</span><span class="p">(</span><span class="n">p</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">x</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="n">preds</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="par_filter_not"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.par_filter_not">[docs]</a><span class="k">def</span> <span class="nf">par_filter_not</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">p</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects in parallel all elements of this list which do not satisfy a predicate.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p: The predicate to not satisfy.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The filtered list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">preds</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">dask</span><span class="o">.</span><span class="n">delayed</span><span class="p">(</span><span class="n">p</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">x</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">preds</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="par_flat_map"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.par_flat_map">[docs]</a><span class="k">def</span> <span class="nf">par_flat_map</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Builds a new list by applying a function in parallel to all elements of this list and using the</span>
+<span class="sd">    elements of the resulting collections.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f: The function to apply to all elements.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The new list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">applications</span> <span class="o">=</span> <span class="n">dask</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">dask</span><span class="o">.</span><span class="n">delayed</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">z</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">applications</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">y</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="pure_map"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.pure_map">[docs]</a><span class="k">def</span> <span class="nf">pure_map</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="n">B</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Builds a new list by applying a function to all elements of this list using memoization to improve performance.</span>
+
+<span class="sd">    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!</span>
+
+<span class="sd">    Type A must be hashable using `hash()` function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f: The PURE function to apply to all elements.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The new list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f_cache</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">f_cache</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="pure_flat_map"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.pure_flat_map">[docs]</a><span class="k">def</span> <span class="nf">pure_flat_map</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Builds a new list by applying a function to all elements of this list and using the elements of the resulting collections using memoization to improve performance.</span>
+
+<span class="sd">    WARNING: f must be a PURE function i.e., calling f on the same input must always lead to the same result!</span>
+
+<span class="sd">    Type A must be hashable using `hash()` function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f: The function to apply to all elements.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The new list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">f_cache</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">f_cache</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="pure_filter"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.pure_filter">[docs]</a><span class="k">def</span> <span class="nf">pure_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">p</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects all elements of this list which satisfy a predicate using memoization to improve performance.</span>
+
+<span class="sd">    WARNING: p must be a PURE function i.e., calling p on the same input must always lead to the same result!</span>
+
+<span class="sd">    Type A must be hashable using `hash()` function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p: The predicate to satisfy.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The filtered list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p_cache</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">p_cache</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="pure_filter_not"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.pure_filter_not">[docs]</a><span class="k">def</span> <span class="nf">pure_filter_not</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">p</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects all elements of this list which do not satisfy a predicate using memoization to improve performance.</span>
+
+<span class="sd">    WARNING: p must be a PURE function i.e., calling p on the same input must always lead to the same result!</span>
+
+<span class="sd">    Type A must be hashable using `hash()` function.</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        p: The predicate not to satisfy.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The filtered list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p_cache</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">p_cache</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="lazy_map"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.lazy_map">[docs]</a><span class="k">def</span> <span class="nf">lazy_map</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="n">B</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">B</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Builds a new list by applying a function to all elements of this list, lazily.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f: The function to apply to all elements.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The new lazy list, as an iterator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="lazy_filter"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.lazy_filter">[docs]</a><span class="k">def</span> <span class="nf">lazy_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">p</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">A</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects all elements of this list which satisfy a predicate, lazily.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p: The predicate to satisfy.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The filtered lazy list, as an iterator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">p</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="lazy_filter_not"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.lazy_filter_not">[docs]</a><span class="k">def</span> <span class="nf">lazy_filter_not</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">p</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">A</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects all elements of this list which do not satisfy a predicate, lazily.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        p: The predicate to not satisfy.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The filtered lazy list, as an iterator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="lazy_flat_map"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.lazy_flat_map">[docs]</a><span class="k">def</span> <span class="nf">lazy_flat_map</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">A</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">B</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">B</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Builds a new lazy list by applying a function to all elements of this list and using the elements of the resulting collections.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        f: The function to apply to all elements.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The new lazy list, as an iterator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="lazy_flatten"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.lazy_flatten">[docs]</a><span class="k">def</span> <span class="nf">lazy_flatten</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">B</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts this list of lists into a lazy list formed by the elements of these lists.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The flattened lazy list, as an iterator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">y</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="lazy_distinct"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.lazy_distinct">[docs]</a><span class="k">def</span> <span class="nf">lazy_distinct</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">A</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects all the elements of this list ignoring the duplicates, lazily.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The lazy list without duplicates, as an iterator.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="lazy_take"><a class="viewcode-back" href="../../pyfuncol.html#pyfuncol.list.lazy_take">[docs]</a><span class="k">def</span> <span class="nf">lazy_take</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">A</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">A</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects the first n elements, lazily.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        n: The number of elements to take from this list.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A lazy list (as an iterator) consisting only of the first n elements of this list,</span>
+<span class="sd">        or else the whole lazy list, if it has less than n elements.</span>
+<span class="sd">        If n is negative, returns an empty lazy list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">yield from</span> <span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">x</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Andrea Veneziano.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
