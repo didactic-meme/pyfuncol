@@ -1,2 +1,2 @@
-dask==2022.9.1
+dask==2022.9.2
 forbiddenfruit==0.1.4
